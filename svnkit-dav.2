@@ -1,0 +1,24 @@
+# HG changeset patch
+# Parent 9ba3792ce9ce68b325f0c9b9c3e36fb8d71aeea0
+fix git svn clone
+
+diff -r 9ba3792ce9ce -r 35638155a9b7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Fri May 04 08:09:29 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Fri May 04 08:18:37 2012 +0200
+@@ -366,7 +366,15 @@
+                 getReporter().deletePath(entryPath);
+             } else {
+                 if (getEntryLinkPath() == null) {
+-                    getReporter().setPath(entryPath, getEntryLockToken(), getEntryRevision(), getDepth(), isEntryStartEmpty());
++                    /**
++                     * fix git svn clone, see
++                     * https://groups.google.com/forum/#!topic/scmmanager/FFJk0n-9HTE
++                     */
++                    SVNDepth depth = getDepth();
++                    if (depth == null || depth == SVNDepth.UNKNOWN){
++                      depth = SVNDepth.INFINITY;
++                    }
++                    getReporter().setPath(entryPath, getEntryLockToken(), getEntryRevision(), depth, isEntryStartEmpty());
+                 } else {
+                     SVNURL linkURL = getDAVResource().getRepository().getLocation().appendPath(getEntryLinkPath(), true);
+                     getReporter().linkPath(linkURL, entryPath, getEntryLockToken(), getEntryRevision(), getDepth(), isEntryStartEmpty());
