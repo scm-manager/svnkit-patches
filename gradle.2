@@ -2,9 +2,9 @@
 # Parent 9abfa36f6139ae11c97109c81516d095d4a741aa
 prepare for maven.scm-manager.org
 
-diff -r 9abfa36f6139 -r db548368a20d build.gradle
+diff -r 9abfa36f6139 build.gradle
 --- a/build.gradle	Fri May 04 08:44:49 2012 +0200
-+++ b/build.gradle	Fri May 04 10:57:53 2012 +0200
++++ b/build.gradle	Fri May 04 11:27:42 2012 +0200
 @@ -1,16 +1,19 @@
  group = 'sonia.svnkit'
 -version = '1.7.4.1'
@@ -36,7 +36,7 @@ diff -r 9abfa36f6139 -r db548368a20d build.gradle
 +    
 +    uploadMaven {
 +      repositories.mavenDeployer {
-+        repository(url: "http://maven.scm-manager.org/nexus/content/repositories/rel",{
++        repository(url: "http://maven.scm-manager.org/nexus/content/repositories/releases",{
 +          authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
 +        })
 +        snapshotRepository(url: "http://maven.scm-manager.org/nexus/content/repositories/snapshots",{
@@ -47,9 +47,9 @@ diff -r 9abfa36f6139 -r db548368a20d build.gradle
  }
  
  configure(javaProjects() + rootProject) {
-diff -r 9abfa36f6139 -r db548368a20d svnkit-dav/build.gradle
+diff -r 9abfa36f6139 svnkit-dav/build.gradle
 --- a/svnkit-dav/build.gradle	Fri May 04 08:44:49 2012 +0200
-+++ b/svnkit-dav/build.gradle	Fri May 04 10:57:53 2012 +0200
++++ b/svnkit-dav/build.gradle	Fri May 04 11:27:42 2012 +0200
 @@ -2,10 +2,12 @@
      enabled = true 
  }
@@ -71,9 +71,25 @@ diff -r 9abfa36f6139 -r db548368a20d svnkit-dav/build.gradle
 +    bottom="<![CDATA[Copyright &#169; 2004-2012 TMate Software Ltd. All Rights Reserved.]]>"
 +}
 \ No newline at end of file
-diff -r 9abfa36f6139 -r db548368a20d svnkit/build.gradle
+diff -r 9abfa36f6139 svnkit-osgi/build.gradle
+--- a/svnkit-osgi/build.gradle	Fri May 04 08:44:49 2012 +0200
++++ b/svnkit-osgi/build.gradle	Fri May 04 11:27:42 2012 +0200
+@@ -52,11 +52,3 @@
+         instruction 'Import-Package', '!*'
+     }
+ }
+-
+-uploadMaven {
+-    repositories.mavenDeployer {
+-        pom.whenConfigured { p ->
+-            p.dependencies.clear()
+-        }
+-    }
+-}
+\ No newline at end of file
+diff -r 9abfa36f6139 svnkit/build.gradle
 --- a/svnkit/build.gradle	Fri May 04 08:44:49 2012 +0200
-+++ b/svnkit/build.gradle	Fri May 04 10:57:53 2012 +0200
++++ b/svnkit/build.gradle	Fri May 04 11:27:42 2012 +0200
 @@ -20,4 +20,8 @@
      title="SVNKit $project.version Javadoc"
      header="<![CDATA[<a target=\"_top\" href=\"http://svnkit.com/\"><span class=\"svnkit\">SVNKit</span>&nbsp;Home<a/>]]>"
