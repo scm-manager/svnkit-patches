@@ -1,0 +1,156 @@
+# HG changeset patch
+# Parent 9af53ae925450acb993e2c67669628ed1a5fbbe5
+added api for svn hooks
+
+diff -r 9af53ae92545 -r 9abfa36f6139 svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHook.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHook.java	Fri May 04 08:44:49 2012 +0200
+@@ -0,0 +1,24 @@
++/*
++ * ====================================================================
++ * Copyright (c) 2004-2011 TMate Software Ltd.  All rights reserved.
++ *
++ * This software is licensed as described in the file COPYING, which
++ * you should have received as part of this distribution.  The terms
++ * are also available at http://svnkit.com/license.html.
++ * If newer versions of this license are posted there, you may use a
++ * newer version instead, at your option.
++ * ====================================================================
++ */
++package org.tmatesoft.svn.core.internal.io.fs;
++
++import org.tmatesoft.svn.core.SVNException;
++
++/**
++ * @author Sebastian Sdorra
++ */
++public interface FSHook 
++{
++ 
++    public void onHook( FSHookEvent event ) throws SVNException;
++    
++}
+diff -r 9af53ae92545 -r 9abfa36f6139 svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHookEvent.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHookEvent.java	Fri May 04 08:44:49 2012 +0200
+@@ -0,0 +1,56 @@
++/*
++ * ====================================================================
++ * Copyright (c) 2004-2011 TMate Software Ltd.  All rights reserved.
++ *
++ * This software is licensed as described in the file COPYING, which
++ * you should have received as part of this distribution.  The terms
++ * are also available at http://svnkit.com/license.html.
++ * If newer versions of this license are posted there, you may use a
++ * newer version instead, at your option.
++ * ====================================================================
++ */
++package org.tmatesoft.svn.core.internal.io.fs;
++
++import java.io.File;
++
++
++/**
++ * @author Sebastian Sdorra
++ */
++public class FSHookEvent 
++{
++    private String type;
++    private File reposRootDir;
++    private String[] args;
++    
++    public FSHookEvent(String type, File reposRootDir, String[] args) {
++        this.type = type;
++        this.reposRootDir = reposRootDir;
++        this.args = args;
++    }
++
++    public void setType(String type) {
++        this.type = type;
++    }
++
++    public String getType() {
++        return type;
++    }
++
++    public void setReposRootDir(File reposRootDir) {
++        this.reposRootDir = reposRootDir;
++    }
++
++    public File getReposRootDir() {
++        return reposRootDir;
++    }
++    
++    public String[] getArgs() {
++        return args;
++    }
++    
++    public void setArgs(String[] args) {
++        this.args = args;
++    }
++    
++}
+diff -r 9af53ae92545 -r 9abfa36f6139 svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHooks.java
+--- a/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHooks.java	Fri May 04 08:33:07 2012 +0200
++++ b/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSHooks.java	Fri May 04 08:44:49 2012 +0200
+@@ -15,6 +15,8 @@
+ import java.io.IOException;
+ import java.io.OutputStream;
+ import java.io.UnsupportedEncodingException;
++import java.util.ArrayList;
++import java.util.Iterator;
+ import java.util.List;
+ 
+ import org.tmatesoft.svn.core.SVNErrorCode;
+@@ -52,8 +54,21 @@
+             ".exe", ".bat", ".cmd"
+     };
+     
++    private static final List hooks = new ArrayList();    
+     private static Boolean ourIsHooksEnabled;
+     
++    public static void registerHook( FSHook hook ){
++        synchronized (hooks) {
++            hooks.add(hook);
++        }
++    }
++    
++    public static void unregisterHook(FSHook hook){
++        synchronized (hooks) {
++            hooks.remove(hook);
++        }
++    }
++    
+     public static void setHooksEnabled(boolean enabled) {
+         ourIsHooksEnabled = enabled ? Boolean.TRUE : Boolean.FALSE;
+     }
+@@ -143,13 +158,26 @@
+     }
+ 
+     private static String runHook(File reposRootDir, String hookName, String[] args, byte[] input) throws SVNException {
++        if (args == null) {
++            args = new String[0];
++        }
++        
++        if ( hooks.size() > 0 ){
++            FSHookEvent event = new FSHookEvent(hookName, reposRootDir, args);
++            synchronized (hooks) {
++                Iterator hookIt = hooks.iterator();
++                while ( hookIt.hasNext() ){
++                    FSHook hook = (FSHook) hookIt.next();
++                    hook.onHook(event);
++                }                
++            }
++        }
++        
+         File hookFile = getHookFile(reposRootDir, hookName);
+         if (hookFile == null) {
+             return null;
+         }
+-        if (args == null) {
+-            args = new String[0];
+-        }
++        
+         Process hookProc = null;
+         String reposPath = reposRootDir.getAbsolutePath().replace(File.separatorChar, '/');
+         String executableName = hookFile.getName().toLowerCase();
