@@ -1,0 +1,19 @@
+# HG changeset patch
+# Parent cc86febe5f15f364b8fe2921a3ec9b2efc472642
+skip not supported properties
+
+diff -r cc86febe5f15 -r 12ddc09328fc svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java	Fri May 04 08:29:38 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java	Fri May 04 08:31:20 2012 +0200
+@@ -325,7 +325,10 @@
+                         filledNamespaces = true;
+                     }
+                     continue;
+-                } 
++                // skip not supported properties, see #24 of SCM-Manager
++                } else if ( doneAction == DAVInsertPropAction.NOT_SUPP ){
++                  continue;
++                }
+             }
+             
+             if (propsProvider.isDeferred()) {
