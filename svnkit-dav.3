@@ -1,0 +1,22 @@
+# HG changeset patch
+# Parent 35638155a9b75a84562c1565140dccde9086dad7
+truncate status line if is to long
+
+diff -r 35638155a9b7 -r 924be003144c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Fri May 04 08:18:37 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Fri May 04 08:20:31 2012 +0200
+@@ -137,7 +137,14 @@
+         } catch (SVNException svne) {
+             StringWriter sw = new StringWriter();
+             svne.printStackTrace(new PrintWriter(sw));
++           /**
++            * scm-manager change
++            * https://bitbucket.org/sdorra/scm-manager/issue/83/impossible-to-create-svn-tag
++            */
+             String msg = sw.getBuffer().toString();
++            if ( msg.length() > 128 ){
++              msg = msg.substring(0, 128);
++            }
+             SVNErrorCode errorCode = svne.getErrorMessage().getErrorCode();
+             if (errorCode == SVNErrorCode.FS_NOT_DIRECTORY ||
+                     errorCode == SVNErrorCode.FS_NOT_FOUND ||
