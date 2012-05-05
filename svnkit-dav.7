@@ -1,0 +1,15 @@
+# HG changeset patch
+# Parent e7f5f31e3ecb851d2ab96b41403a9cea4505fb62
+fix path not found on merge
+
+diff -r e7f5f31e3ecb -r 388f7473e8cd svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetLocationSegmentsHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetLocationSegmentsHandler.java	Sat May 05 14:23:30 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetLocationSegmentsHandler.java	Sat May 05 16:32:46 2012 +0200
+@@ -148,6 +148,7 @@
+ 
+         String path = locationSegment.getPath();
+         if (path != null) {
++            path = DAVPathUtil.dropLeadingSlash(path);
+             String quotedPath = SVNEncodingUtil.xmlEncodeCDATA(path, true);
+             attrs.put(PATH_ATTR, quotedPath);
+             attrs.put(RANGE_START_ATTR, String.valueOf(locationSegment.getStartRevision()));
