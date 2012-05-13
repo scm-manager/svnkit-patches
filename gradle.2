@@ -1,0 +1,32 @@
+# HG changeset patch
+# Parent 7cf3e3ca3e1ae1176355948e3b81445eca6b08eb
+set repositories for deployment
+
+diff -r 7cf3e3ca3e1a -r e959640e7130 build.gradle
+--- a/build.gradle	Sun May 13 14:55:04 2012 +0200
++++ b/build.gradle	Sun May 13 15:05:31 2012 +0200
+@@ -50,12 +50,23 @@
+             }
+         }
+     }
++    
++    uploadMaven {
++      repositories.mavenDeployer {
++        repository(url: "http://maven.scm-manager.org/nexus/content/repositories/releases",{
++          authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
++        })
++        snapshotRepository(url: "http://maven.scm-manager.org/nexus/content/repositories/snapshots",{
++          authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
++        })
++      }
++    }
+ }
+ 
+ 
+ configure(javaProjects()) {
+     apply plugin : 'java'
+-    apply plugin : 'signing'
++    // apply plugin : 'signing'
+ 
+     sourceCompatibility = target
+     targetCompatibility = target
