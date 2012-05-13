@@ -1,36 +1,34 @@
 # HG changeset patch
-# Parent 05bb45ac0a9fdf2710df9a550f2fa71d9edc530c
+# Parent 8d68ce1e90afa4ec8473e18d14ed172b7a1bc602
 allow override of DAVServlet.getConfig()
 
-diff -r 05bb45ac0a9f -r 9ba3792ce9ce svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Fri May 04 08:04:26 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Fri May 04 08:09:29 2012 +0200
-@@ -55,6 +55,11 @@
+diff -r 8d68ce1e90af svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Sun May 13 15:59:20 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Sun May 13 16:00:20 2012 +0200
+@@ -55,6 +55,10 @@
      private boolean myIsAutoVersioning = false;
      private boolean myIsAllowBulkUpdates = false;
      private boolean myIsAllowDepthInfinity = false;
 +
-+    // scm-manager change
 +    public DAVConfig()
 +    {
 +    }
      
      public DAVConfig(ServletConfig servletConfig) throws SVNException {
          String repositoryPath = servletConfig.getInitParameter(PATH_DIRECIVE);
-diff -r 05bb45ac0a9f -r 9ba3792ce9ce svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Fri May 04 08:04:26 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Fri May 04 08:09:29 2012 +0200
-@@ -110,7 +110,8 @@
+diff -r 8d68ce1e90af svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Sun May 13 15:59:20 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Sun May 13 16:00:20 2012 +0200
+@@ -110,7 +110,7 @@
       
      private DAVConfig myDAVConfig;
  
 -    private DAVConfig getDAVConfig() {
-+    // scm-mangager change
 +    protected DAVConfig getDAVConfig() {
          return myDAVConfig;
      }
  
-@@ -301,4 +302,4 @@
+@@ -301,4 +301,4 @@
      public static boolean isHTTPServerError(int statusCode) {
          return statusCode >= 500 && statusCode < 600;
      }
