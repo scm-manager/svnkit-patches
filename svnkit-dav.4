@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent 924be003144ca7e59493e3d97d4860fa8dab5c0a
+# Parent 08309c51774e0b79d681caa5dac091c239f007a0
 fix error 500 path not found for urls with non url characters
 
-diff -r 924be003144c -r cc86febe5f15 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Fri May 04 08:20:31 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Fri May 04 08:29:38 2012 +0200
+diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sun May 13 16:03:21 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sun May 13 16:04:16 2012 +0200
 @@ -64,7 +64,7 @@
          myUserPrincipal = request.getUserPrincipal();
          myRepositoryRootDir = getRepositoryRootDir(request.getPathInfo());
@@ -56,9 +56,9 @@ diff -r 924be003144c -r cc86febe5f15 svnkit-dav/src/main/java/org/tmatesoft/svn/
 +      return SVNEncodingUtil.uriEncode( DAVPathUtil.addLeadingSlash(requestContext) );
      }
  }
-diff -r 924be003144c -r cc86febe5f15 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Fri May 04 08:20:31 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Fri May 04 08:29:38 2012 +0200
+diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Sun May 13 16:03:21 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Sun May 13 16:04:16 2012 +0200
 @@ -11,6 +11,7 @@
   */
  package org.tmatesoft.svn.core.internal.server.dav.handlers;
@@ -72,7 +72,7 @@ diff -r 924be003144c -r cc86febe5f15 svnkit-dav/src/main/java/org/tmatesoft/svn/
      public DAVResponse(String description, String href, DAVResponse nextResponse, DAVPropsResult propResult, int statusCode) {
          myDescription = description;
 -        myHref = href;
-+        // encode href to fix scm-manager issue #22
++        // encode href
 +        myHref = SVNEncodingUtil.uriEncode(href);
          myNextResponse = nextResponse;
          myStatusCode = statusCode;

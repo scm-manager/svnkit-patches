@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent 12ddc09328fcc99ca3c5d300ee3d2f7705800706
+# Parent a22015bdfaf653107e52c380526b15fc3fc41716
 skip scheme and port check if the request is forwarded
 
-diff -r 12ddc09328fc -r 9af53ae92545 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Fri May 04 08:31:20 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Fri May 04 08:33:07 2012 +0200
+diff -r a22015bdfaf6 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Sun May 13 16:06:18 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Sun May 13 16:07:22 2012 +0200
 @@ -46,6 +46,8 @@
   * @author  TMate Software Ltd.
   */
@@ -37,7 +37,7 @@ diff -r 12ddc09328fc -r 9af53ae92545 svnkit-dav/src/main/java/org/tmatesoft/svn/
 +        String serverHost = request.getServerName();
 +        String forwardedHost = request.getHeader(HEADER_FORWARDHOST);
 +        
-+        // skip scheme and port check if the request is forwarded, see scmmanager #25
++        // skip scheme and port check if the request is forwarded
 +        if ( forwardedHost == null || forwardedHost.length() == 0 ){
 +        
 +          if (parsedURI.getScheme() != null || parsedURI.getPort() != -1 || mustBeAbsolute) {
