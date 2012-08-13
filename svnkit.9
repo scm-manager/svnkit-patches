@@ -1,0 +1,19 @@
+# HG changeset patch
+# Parent ba9326bcc1ff3e2051abfbb1a2ee5976121b5f18
+create patch svnkit.9
+
+diff -r ba9326bcc1ff svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Mon Aug 13 09:34:54 2012 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Mon Aug 13 09:37:28 2012 +0200
+@@ -221,6 +221,11 @@
+         SVNAuthentication auth = new SVNUserNameAuthentication(userName, false, null, false);
+         BasicAuthenticationManager authManager = new BasicAuthenticationManager(new SVNAuthentication[] { auth });
+         SVNRepository resourceRepository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(getResourceRepositoryRoot()));
++        
++        // use latest revision
++        if ( version == -1 ){
++          version = resourceRepository.getLatestRevision();
++        }
+         resourceRepository.setAuthenticationManager(authManager);
+         DAVResource resource = new DAVResource(resourceRepository, this, resourceURI, isSVNClient, deltaBase, version, 
+                 clientOptions, baseChecksum, resultChecksum, userName, activitiesDBDir, lockTokens, capabilities);
