@@ -1,0 +1,40 @@
+# HG changeset patch
+# Parent e8e907cc4020a19f1c0c5ab96f113710b8f2a66e
+diff -r e8e907cc4020 -r 552da0749e10 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVMergeInfoHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVMergeInfoHandler.java	Tue Nov 20 09:04:08 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVMergeInfoHandler.java	Tue Nov 20 19:27:05 2012 +0100
+@@ -12,6 +12,7 @@
+ package org.tmatesoft.svn.core.internal.server.dav.handlers;
+ 
+ import java.io.UnsupportedEncodingException;
++import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.Map;
+ 
+@@ -71,11 +72,15 @@
+         StringBuffer xmlBuffer = new StringBuffer();
+         addXMLHeader(xmlBuffer, MERGEINFO_REPORT);
+ 
++        Map pathMapping = new HashMap();
++        
+         for (int i = 0; i < getMergeInfoRequest().getTargetPaths().length; i++) {
+             String currentPath = getMergeInfoRequest().getTargetPaths()[i];
+             DAVPathUtil.testCanonical(currentPath);
+             if (currentPath.length() == 0 || currentPath.charAt(0) != '/') {
+-                getMergeInfoRequest().getTargetPaths()[i] = SVNPathUtil.append(getDAVResource().getResourceURI().getPath(), currentPath);
++                String newPath = SVNPathUtil.append(getDAVResource().getResourceURI().getPath(), currentPath);
++                getMergeInfoRequest().getTargetPaths()[i] = newPath;
++                pathMapping.put(newPath, currentPath);
+             }
+         }
+ 
+@@ -86,6 +91,9 @@
+             for (Iterator iterator = mergeInfoMap.entrySet().iterator(); iterator.hasNext();) {
+                 Map.Entry entry = (Map.Entry) iterator.next();
+                 String path = (String) entry.getKey();
++                if ( pathMapping.containsKey(path) ){
++                    path = (String) pathMapping.get(path);
++                }
+                 SVNMergeInfo mergeInfo = (SVNMergeInfo) entry.getValue();
+                 addMergeInfo(path, mergeInfo, xmlBuffer);
+             }
