@@ -1,17 +1,14 @@
 # HG changeset patch
 # Parent 5637a8a340b7221065021fd138df9f7f344624ef
+prepare for next development iteration
 
 diff -r 5637a8a340b7 build.gradle
 --- a/build.gradle	Fri Nov 30 08:55:18 2012 +0100
-+++ b/build.gradle	Fri Nov 30 08:58:23 2012 +0100
-@@ -1,8 +1,8 @@
++++ b/build.gradle	Fri Nov 30 09:03:45 2012 +0100
+@@ -1,5 +1,5 @@
  group = 'org.tmatesoft.svnkit'
 -version = '1.7.6'
-+version = '1.7.6-scm2'
++version = '1.7.6-scm3'
  
  project.ext {
--   release = false
-+   release = true
-    target = '1.5'
-    compatibleSvnVersion = '1.7.6'
- }
+    release = false
