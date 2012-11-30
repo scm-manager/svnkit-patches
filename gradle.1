@@ -1,23 +1,10 @@
 # HG changeset patch
-# Parent 645b1477f87bdf1298f23a4844c5335adb14626f
+# Parent 97f9c4bfbf20981ed206023c3cfcea3cc671a4a2
 change group and build jar of svnkit-dav
 
-diff -r 645b1477f87b build.gradle
---- a/build.gradle	Fri Jun 22 13:33:39 2012 +0200
-+++ b/build.gradle	Fri Jun 22 14:04:35 2012 +0200
-@@ -1,10 +1,10 @@
- group = 'org.tmatesoft.svnkit'
--version = '1.7.6'
-+version = '1.7.5.1'
- 
- project.ext {
-    release = false
-    target = '1.5'
--   compatibleSvnVersion = '1.7.6'
-+   compatibleSvnVersion = '1.7.5'
- }
- 
- apply from: 'build.pom.gradle'
+diff -r 97f9c4bfbf20 build.gradle
+--- a/build.gradle	Tue Nov 20 08:26:03 2012 +0100
++++ b/build.gradle	Fri Nov 30 08:28:00 2012 +0100
 @@ -116,13 +116,13 @@
  }
  
@@ -34,18 +21,18 @@ diff -r 645b1477f87b build.gradle
  }
  
  project(':svnkit-test') {
-diff -r 645b1477f87b settings.gradle
---- a/settings.gradle	Fri Jun 22 13:33:39 2012 +0200
-+++ b/settings.gradle	Fri Jun 22 14:04:35 2012 +0200
+diff -r 97f9c4bfbf20 settings.gradle
+--- a/settings.gradle	Tue Nov 20 08:26:03 2012 +0100
++++ b/settings.gradle	Fri Nov 30 08:28:00 2012 +0100
 @@ -1,4 +1,4 @@
 -rootProject.name = 'org.tmatesoft.svnkit'
 +rootProject.name = 'sonia.svnkit'
  
  include 'svnkit'
  include 'svnkit-cli'
-diff -r 645b1477f87b svnkit-dav/build.gradle
+diff -r 97f9c4bfbf20 svnkit-dav/build.gradle
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/build.gradle	Fri Jun 22 14:04:35 2012 +0200
++++ b/svnkit-dav/build.gradle	Fri Nov 30 08:28:00 2012 +0100
 @@ -0,0 +1,11 @@
 +jar {
 +    enabled = true 
