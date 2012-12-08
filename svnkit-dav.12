@@ -2,9 +2,9 @@
 # Parent a4af96552d12110d35c4e715b6349cc1a1847c90
 Location header should not be url encoded
 
-diff -r a4af96552d12 -r 911a7ff62660 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
+diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
 --- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 18:27:32 2012 +0100
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 18:34:10 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 18:54:15 2012 +0100
 @@ -101,6 +101,7 @@
  import org.xml.sax.SAXNotRecognizedException;
  import org.xml.sax.SAXNotSupportedException;
@@ -13,12 +13,13 @@ diff -r a4af96552d12 -r 911a7ff62660 svnkit-dav/src/main/java/org/tmatesoft/svn/
  /**
   * @author TMate Software Ltd.
   * @version 1.2.0
-@@ -1472,7 +1473,7 @@
- 
-     protected void handleDAVCreated(String location, String what, boolean isReplaced) throws SVNException {
-         if (location == null) {
--            location = getURI();
-+            location = SVNEncodingUtil.uriDecode(getURI());
+@@ -1479,6 +1480,9 @@
+             setResponseStatus(HttpServletResponse.SC_NO_CONTENT);
+             return;
          }
-         
-         if (isReplaced) {
++        
++        // location header should not be url encoded
++        location = SVNEncodingUtil.uriDecode(getURI());
+ 
+         setResponseHeader(HTTPHeader.LOCATION_HEADER, constructURL(location));
+         String body = what + " " + SVNEncodingUtil.xmlEncodeCDATA(location) + " has been created.";
