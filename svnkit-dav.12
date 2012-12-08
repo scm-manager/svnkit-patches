@@ -4,7 +4,7 @@ Location header should not be url encoded
 
 diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
 --- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 18:27:32 2012 +0100
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 18:54:15 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 19:40:38 2012 +0100
 @@ -101,6 +101,7 @@
  import org.xml.sax.SAXNotRecognizedException;
  import org.xml.sax.SAXNotSupportedException;
@@ -19,7 +19,7 @@ diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          }
 +        
 +        // location header should not be url encoded
-+        location = SVNEncodingUtil.uriDecode(getURI());
++        location = SVNEncodingUtil.uriDecode(location);
  
          setResponseHeader(HTTPHeader.LOCATION_HEADER, constructURL(location));
          String body = what + " " + SVNEncodingUtil.xmlEncodeCDATA(location) + " has been created.";
