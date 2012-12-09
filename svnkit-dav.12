@@ -2,9 +2,82 @@
 # Parent a4af96552d12110d35c4e715b6349cc1a1847c90
 Location header should not be url encoded
 
+diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVPathUtil.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVPathUtil.java	Sat Dec 08 18:27:32 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVPathUtil.java	Sun Dec 09 10:48:48 2012 +0100
+@@ -122,10 +122,18 @@
+                     DAVElement.SVN_DAV_ERROR_NAMESPACE, 0, null);
+         }
+     }
++    
++    public static String buildURI(String context, DAVResourceKind davResourceKind, long revision, String path, boolean addHref) {
++      return buildURI(context, davResourceKind, revision, path, addHref, true);
++    }
+ 
+-    public static String buildURI(String context, DAVResourceKind davResourceKind, long revision, String path, boolean addHref) {
++    public static String buildURI(String context, DAVResourceKind davResourceKind, long revision, String path, boolean addHref, boolean urlEncode) {
+         StringBuffer resultURI = new StringBuffer();
+-        path = path == null ? "" : SVNEncodingUtil.uriEncode(path);
++        if ( path == null ){
++          path = "";
++        } else if (urlEncode){
++          path = SVNEncodingUtil.uriEncode(path);
++        }
+         context = context == null ? "" : context;
+         if (addHref) {
+             SVNXMLUtil.openXMLTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, DAVElement.HREF.getName(), SVNXMLUtil.XML_STYLE_PROTECT_CDATA, 
+diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVMakeCollectionHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVMakeCollectionHandler.java	Sat Dec 08 18:27:32 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVMakeCollectionHandler.java	Sun Dec 09 10:48:48 2012 +0100
+@@ -21,6 +21,7 @@
+ import org.tmatesoft.svn.core.internal.server.dav.DAVRepositoryManager;
+ import org.tmatesoft.svn.core.internal.server.dav.DAVResource;
+ import org.tmatesoft.svn.core.internal.server.dav.DAVResourceState;
++import org.tmatesoft.svn.core.internal.util.SVNEncodingUtil;
+ 
+ 
+ /**
+@@ -85,7 +86,10 @@
+         }
+ 
+         notifyCreated(resource, lockProvider, resourceState, DAVDepth.DEPTH_ZERO);
+-        handleDAVCreated(null, "Collection", false);
++        
++        // use decoded location header
++        String location = SVNEncodingUtil.uriDecode(getURI());
++        handleDAVCreated(location, "Collection", false);
+     }
+ 
+     protected DAVRequest getDAVRequest() {
+diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPutHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPutHandler.java	Sat Dec 08 18:27:32 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPutHandler.java	Sun Dec 09 10:48:48 2012 +0100
+@@ -165,7 +165,9 @@
+ 
+         notifyCreated(resource, lockProvider, resourceState, DAVDepth.DEPTH_ZERO);
+ 
+-        handleDAVCreated(null, "Resource", resourceState == DAVResourceState.EXISTS);
++        // use decoded location header
++        String location = SVNEncodingUtil.uriDecode(getURI());
++        handleDAVCreated(location, "Resource", resourceState == DAVResourceState.EXISTS);
+     }
+ 
+     protected DAVRequest getDAVRequest() {
+diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Sat Dec 08 18:27:32 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Sun Dec 09 10:48:48 2012 +0100
+@@ -720,7 +720,7 @@
+ 
+     private StringBuffer addVersionURL(String path, StringBuffer xmlBuffer) {
+         long revision = DAVServletUtil.getSafeCreatedRevision(myRevisionRoot, path);
+-        String url = DAVPathUtil.buildURI(getDAVResource().getResourceURI().getContext(), DAVResourceKind.VERSION, revision, path, false);
++        String url = DAVPathUtil.buildURI(getDAVResource().getResourceURI().getContext(), DAVResourceKind.VERSION, revision, path, false, false);
+         xmlBuffer = SVNXMLUtil.openXMLTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, "checked-in", SVNXMLUtil.XML_STYLE_NORMAL, null, xmlBuffer);
+         SVNXMLUtil.openCDataTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, "href", url, xmlBuffer);
+         SVNXMLUtil.closeXMLTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, "checked-in", xmlBuffer);
 diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
 --- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 18:27:32 2012 +0100
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Dec 08 19:40:38 2012 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sun Dec 09 10:48:48 2012 +0100
 @@ -101,6 +101,7 @@
  import org.xml.sax.SAXNotRecognizedException;
  import org.xml.sax.SAXNotSupportedException;
@@ -13,13 +86,12 @@ diff -r a4af96552d12 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
  /**
   * @author TMate Software Ltd.
   * @version 1.2.0
-@@ -1479,6 +1480,9 @@
+@@ -1479,7 +1480,7 @@
              setResponseStatus(HttpServletResponse.SC_NO_CONTENT);
              return;
          }
+-
 +        
-+        // location header should not be url encoded
-+        location = SVNEncodingUtil.uriDecode(location);
- 
          setResponseHeader(HTTPHeader.LOCATION_HEADER, constructURL(location));
          String body = what + " " + SVNEncodingUtil.xmlEncodeCDATA(location) + " has been created.";
+         response(body, DAVServlet.getStatusLine(HttpServletResponse.SC_CREATED), HttpServletResponse.SC_CREATED);
