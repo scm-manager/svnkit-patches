@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent 97f9c4bfbf20981ed206023c3cfcea3cc671a4a2
+# Parent 3c418c54c3244f8b01d921a98336aad9b91f6827
 change group and build jar of svnkit-dav
 
-diff -r 97f9c4bfbf20 build.gradle
---- a/build.gradle	Tue Nov 20 08:26:03 2012 +0100
-+++ b/build.gradle	Fri Nov 30 08:28:00 2012 +0100
+diff -r 3c418c54c324 build.gradle
+--- a/build.gradle	Wed May 29 19:51:15 2013 +0200
++++ b/build.gradle	Mon Jun 03 18:57:28 2013 +0200
 @@ -116,13 +116,13 @@
  }
  
@@ -21,18 +21,34 @@ diff -r 97f9c4bfbf20 build.gradle
  }
  
  project(':svnkit-test') {
-diff -r 97f9c4bfbf20 settings.gradle
---- a/settings.gradle	Tue Nov 20 08:26:03 2012 +0100
-+++ b/settings.gradle	Fri Nov 30 08:28:00 2012 +0100
+@@ -156,10 +156,11 @@
+ 
+         scripts project(path: ':svnkit-cli', configuration: 'scripts')
+ 
+-        osgi project(path: ':svnkit-osgi', configuration: 'archives')
+-        osgi 'com.trilead:trilead-ssh2-osgi:1.0.0-build216'
+-        osgi 'org.tmatesoft.sqljet:sqljet-osgi:1.1.7'
+-        osgi 'net.java.dev.jna:jna-osgi:3.4.0'
++        // skip osgi build, because of dependency problems
++        // osgi project(path: ':svnkit-osgi', configuration: 'archives')
++        // osgi 'com.trilead:trilead-ssh2-osgi:1.0.0-build216'
++        // osgi 'org.tmatesoft.sqljet:sqljet-osgi:1.1.7'
++        // osgi 'net.java.dev.jna:jna-osgi:3.4.0'
+     }
+ }
+ task publish(dependsOn: [':svnkit-distribution:buildAll']) {
+diff -r 3c418c54c324 settings.gradle
+--- a/settings.gradle	Wed May 29 19:51:15 2013 +0200
++++ b/settings.gradle	Mon Jun 03 18:57:28 2013 +0200
 @@ -1,4 +1,4 @@
 -rootProject.name = 'org.tmatesoft.svnkit'
 +rootProject.name = 'sonia.svnkit'
  
  include 'svnkit'
  include 'svnkit-cli'
-diff -r 97f9c4bfbf20 svnkit-dav/build.gradle
+diff -r 3c418c54c324 svnkit-dav/build.gradle
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/build.gradle	Fri Nov 30 08:28:00 2012 +0100
++++ b/svnkit-dav/build.gradle	Mon Jun 03 18:57:28 2013 +0200
 @@ -0,0 +1,11 @@
 +jar {
 +    enabled = true 
