@@ -11,4 +11,5 @@ gradle.2
 svnkit-dav.10
 svnkit-dav.12
 version
+jetty
 svnkit-dav.ra_serf
