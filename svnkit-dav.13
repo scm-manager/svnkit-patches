@@ -1,0 +1,17 @@
+# HG changeset patch
+# Parent 0b6779d6495ed76d2cd2ab2b156dfc4cf517f31b
+
+diff -r 0b6779d6495e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java	Mon Jul 22 09:28:50 2013 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java	Mon Jul 22 09:36:47 2013 +0200
+@@ -44,7 +44,9 @@
+     public DAVLock parseLockInfo(DAVLockHandler handler, DAVResource resource, List namespaces) throws DAVException {
+         DAVDepth depth = null;
+         try {
+-            depth = handler.getRequestDepth(DAVDepth.DEPTH_INFINITY);
++            // default depth should be 0, not inifity
++            // see https://bitbucket.org/sdorra/scm-manager/issue/420/svn-locks-does-not-work-with-svnkit
++            depth = handler.getRequestDepth(DAVDepth.DEPTH_ZERO);
+         } catch (SVNException svne) {
+             throw DAVException.convertError(svne.getErrorMessage(), HttpServletResponse.SC_BAD_REQUEST, null, null);
+         }
