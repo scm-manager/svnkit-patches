@@ -4,11 +4,18 @@ prepare for next development iteration
 
 diff -r e590721b3e5d build.gradle
 --- a/build.gradle	Tue Jun 18 10:43:30 2013 +0200
-+++ b/build.gradle	Tue Jun 18 10:44:50 2013 +0200
-@@ -1,5 +1,5 @@
++++ b/build.gradle	Mon Jul 22 09:28:50 2013 +0200
+@@ -1,10 +1,10 @@
  group = 'org.tmatesoft.svnkit'
 -version = '1.7.9'
-+version = '1.7.9-scm2'
++version = '1.7.9-scm3'
  
  project.ext {
-    release = true
+-   release = true
++   release = false
+    target = '1.5'
+-   compatibleSvnVersion = '1.7.9'
++   compatibleSvnVersion = '1.8.0'
+ }
+ 
+ apply from: 'build.pom.gradle'
