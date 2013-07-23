@@ -1,9 +1,30 @@
 # HG changeset patch
-# Parent 0b6779d6495ed76d2cd2ab2b156dfc4cf517f31b
+# Parent 89216444e379379de30f14d728eca1e7ae58ead9
 
-diff -r 0b6779d6495e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java	Mon Jul 22 09:28:50 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java	Mon Jul 22 09:36:47 2013 +0200
+diff -r 89216444e379 .nb-gradle-properties
+--- a/.nb-gradle-properties	Tue Jul 23 09:00:02 2013 +0200
++++ b/.nb-gradle-properties	Tue Jul 23 21:15:19 2013 +0200
+@@ -36,5 +36,17 @@
+       <task-args/>
+       <task-jvm-args/>
+     </task>
++    <task>
++      <display-name>jettyRunDebug</display-name>
++      <non-blocking>no</non-blocking>
++      <task-names>
++        <name must-exist="yes">jettyStop</name>
++        <name must-exist="yes">jettyRun</name>
++      </task-names>
++      <task-args/>
++      <task-jvm-args>
++        <arg>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000</arg>
++      </task-jvm-args>
++    </task>
+   </common-tasks>
+ </gradle-project-properties>
+diff -r 89216444e379 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java	Tue Jul 23 09:00:02 2013 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVLockRequest.java	Tue Jul 23 21:15:19 2013 +0200
 @@ -44,7 +44,9 @@
      public DAVLock parseLockInfo(DAVLockHandler handler, DAVResource resource, List namespaces) throws DAVException {
          DAVDepth depth = null;
@@ -15,3 +36,37 @@ diff -r 0b6779d6495e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          } catch (SVNException svne) {
              throw DAVException.convertError(svne.getErrorMessage(), HttpServletResponse.SC_BAD_REQUEST, null, null);
          }
+diff -r 89216444e379 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Tue Jul 23 09:00:02 2013 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Tue Jul 23 21:15:19 2013 +0200
+@@ -1228,7 +1228,8 @@
+                 List lockChildren = lockChild.getChildren();
+                 for (Iterator lockChildrenIter = lockChildren.iterator(); lockChildrenIter.hasNext();) {
+                     DAVElementProperty lockElementChild = (DAVElementProperty) lockChildrenIter.next();
+-                    if (lockElementChild.getName() == LOCK_PATH_ELEM) {
++                    // check if the element name is equals, because svn 1.8 seems to miss ns prefix
++                    if (elementNameEquals(lockElementChild.getName(), LOCK_PATH_ELEM)) {
+                         String cdata = lockElementChild.getFirstValue(false);
+                         DAVPathUtil.testCanonical(cdata);
+                         lockPath = SVNPathUtil.append(pathPrefix, cdata);
+@@ -1241,7 +1242,8 @@
+                             lockPath = null;
+                             lockToken = null;
+                         }
+-                    } else if (lockElementChild.getName() == LOCK_TOKEN_ELEM) {
++                    // check if the element name is equals, because svn 1.8 seems to miss ns prefix
++                    } else if (elementNameEquals(lockElementChild.getName(), LOCK_TOKEN_ELEM)) {
+                         lockToken = lockElementChild.getFirstValue(true);
+                         if (lockPath != null && lockToken != null) {
+                             pathsToLockTokens.put(lockPath, lockToken);
+@@ -1254,6 +1256,10 @@
+         }
+         return pathsToLockTokens;
+     }
++   
++    private boolean elementNameEquals( DAVElement element, DAVElement other ){
++      return element.getName().equals(other.getName());
++    }
+ 
+     protected DAVDepth getRequestDepth(DAVDepth defaultDepth) throws SVNException {
+         String depth = getRequestHeader(DEPTH_HEADER);
