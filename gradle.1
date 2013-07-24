@@ -1,11 +1,11 @@
 # HG changeset patch
-# Parent 3c418c54c3244f8b01d921a98336aad9b91f6827
+# Parent fb1f4590d4ff5c638d26353a667d223b13bf92b8
 change group and build jar of svnkit-dav
 
-diff -r 3c418c54c324 build.gradle
---- a/build.gradle	Wed May 29 19:51:15 2013 +0200
-+++ b/build.gradle	Mon Jun 03 18:57:28 2013 +0200
-@@ -116,13 +116,13 @@
+diff -r fb1f4590d4ff build.gradle
+--- a/build.gradle	Wed Jul 24 08:44:46 2013 +0200
++++ b/build.gradle	Wed Jul 24 08:49:02 2013 +0200
+@@ -118,13 +118,13 @@
  }
  
  project(':svnkit-dav') {
@@ -21,34 +21,18 @@ diff -r 3c418c54c324 build.gradle
  }
  
  project(':svnkit-test') {
-@@ -156,10 +156,11 @@
- 
-         scripts project(path: ':svnkit-cli', configuration: 'scripts')
- 
--        osgi project(path: ':svnkit-osgi', configuration: 'archives')
--        osgi 'com.trilead:trilead-ssh2-osgi:1.0.0-build216'
--        osgi 'org.tmatesoft.sqljet:sqljet-osgi:1.1.7'
--        osgi 'net.java.dev.jna:jna-osgi:3.4.0'
-+        // skip osgi build, because of dependency problems
-+        // osgi project(path: ':svnkit-osgi', configuration: 'archives')
-+        // osgi 'com.trilead:trilead-ssh2-osgi:1.0.0-build216'
-+        // osgi 'org.tmatesoft.sqljet:sqljet-osgi:1.1.7'
-+        // osgi 'net.java.dev.jna:jna-osgi:3.4.0'
-     }
- }
- task publish(dependsOn: [':svnkit-distribution:buildAll']) {
-diff -r 3c418c54c324 settings.gradle
---- a/settings.gradle	Wed May 29 19:51:15 2013 +0200
-+++ b/settings.gradle	Mon Jun 03 18:57:28 2013 +0200
+diff -r fb1f4590d4ff settings.gradle
+--- a/settings.gradle	Wed Jul 24 08:44:46 2013 +0200
++++ b/settings.gradle	Wed Jul 24 08:49:02 2013 +0200
 @@ -1,4 +1,4 @@
 -rootProject.name = 'org.tmatesoft.svnkit'
 +rootProject.name = 'sonia.svnkit'
  
  include 'svnkit'
  include 'svnkit-cli'
-diff -r 3c418c54c324 svnkit-dav/build.gradle
+diff -r fb1f4590d4ff svnkit-dav/build.gradle
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/build.gradle	Mon Jun 03 18:57:28 2013 +0200
++++ b/svnkit-dav/build.gradle	Wed Jul 24 08:49:02 2013 +0200
 @@ -0,0 +1,11 @@
 +jar {
 +    enabled = true 
