@@ -4,11 +4,15 @@ prepare for next development iteration
 
 diff -r 96d6703fefa2 build.gradle
 --- a/build.gradle	Wed Jul 24 08:53:53 2013 +0200
-+++ b/build.gradle	Wed Jul 24 08:59:31 2013 +0200
-@@ -1,5 +1,5 @@
++++ b/build.gradle	Wed Jul 24 09:02:14 2013 +0200
+@@ -1,8 +1,8 @@
  group = 'org.tmatesoft.svnkit'
 -version = '1.7.10'
-+version = '1.7.10-scm1'
++version = '1.7.10-scm2'
  
  project.ext {
-    release = true
+-   release = true
++   release = false
+    target = '1.5'
+    compatibleSvnVersion = '1.7.9'
+ }
