@@ -1,0 +1,31 @@
+# HG changeset patch
+# Parent 96d6703fefa24801f43fdd3d3dc35e5280477b9f
+
+diff -r 96d6703fefa2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Wed Jul 24 08:53:53 2013 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Thu Jul 25 09:11:53 2013 +0200
+@@ -150,12 +150,24 @@
+             parsedHost += domain;
+         }
+         
++        serverHost = removeUsernameFromHost(serverHost);
++        
+         if (parsedHost != null && !parsedHost.equals(serverHost)) {
+             throw new DAVException("Destination URI refers to a different server.", HttpServletResponse.SC_BAD_GATEWAY, 0);
+         }
+         return parsedURI;
+     }
+     
++    private static String removeUsernameFromHost(String host) {
++      String result = host;
++      int at = host.indexOf('@');
++      if ( at >= 0 && (at + 1) < host.length() )
++      {
++        result = host.substring(at + 1);
++      }
++      return result;
++    }
++    
+     public static void setAutoRevisionProperties(DAVResource resource) throws DAVException {
+         if (!(resource.getType() == DAVResourceType.WORKING && resource.isAutoCheckedOut())) {
+             throw new DAVException("Set_auto_revprops called on invalid resource.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 0);
