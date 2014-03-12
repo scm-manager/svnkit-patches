@@ -1,0 +1,37 @@
+# HG changeset patch
+# Parent 8df0052cf9547b7d30c8030b42b875076613e559
+
+diff -r 8df0052cf954 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropPatchHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropPatchHandler.java	Wed Mar 12 08:12:47 2014 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropPatchHandler.java	Wed Mar 12 08:28:36 2014 +0100
+@@ -94,17 +94,19 @@
+             
+             boolean isRemove = childElementName == DAVPropPatchRequest.REMOVE;
+             List propChildren = propChildrenElement.getChildren();
+-            for (Iterator propsIter = propChildren.iterator(); propsIter.hasNext();) {
+-                DAVElementProperty property = (DAVElementProperty) propsIter.next();
+-                DAVElement propertyName = property.getName();
+-                PropertyChangeContext propContext = new PropertyChangeContext();
+-                propContext.myIsSet = !isRemove;
+-                propContext.myProperty = property;
+-                properties.add(propContext);
+-                validateProp(propertyName, propsProvider, propContext);
+-                if (propContext.myError != null && propContext.myError.getResponseCode() >= 300) {
+-                    isFailure = true;
+-                }
++            if (propChildren != null) {
++              for (Iterator propsIter = propChildren.iterator(); propsIter.hasNext();) {
++                  DAVElementProperty property = (DAVElementProperty) propsIter.next();
++                  DAVElement propertyName = property.getName();
++                  PropertyChangeContext propContext = new PropertyChangeContext();
++                  propContext.myIsSet = !isRemove;
++                  propContext.myProperty = property;
++                  properties.add(propContext);
++                  validateProp(propertyName, propsProvider, propContext);
++                  if (propContext.myError != null && propContext.myError.getResponseCode() >= 300) {
++                      isFailure = true;
++                  }
++              }
+             }
+         }
+         
