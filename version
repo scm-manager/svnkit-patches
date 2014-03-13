@@ -1,18 +1,14 @@
 # HG changeset patch
-# Parent 7d087f83b82f160a41c2c1ba56d31719e60cba4e
+# Parent 3e36ff6e68fa6936327183d5d3454767d1921a74
 prepare for next development iteration
 
-diff -r 7d087f83b82f build.gradle
---- a/build.gradle	Sat Mar 08 17:31:55 2014 +0100
-+++ b/build.gradle	Sat Mar 08 17:39:35 2014 +0100
-@@ -1,8 +1,8 @@
+diff -r 3e36ff6e68fa build.gradle
+--- a/build.gradle	Wed Mar 12 08:28:36 2014 +0100
++++ b/build.gradle	Thu Mar 13 11:12:52 2014 +0100
+@@ -1,5 +1,5 @@
  group = 'org.tmatesoft.svnkit'
 -version = '1.8.4'
 +version = '1.8.4-scm2'
  
  project.ext {
--   release = true
-+   release = false
-    target = '1.5'
-    compatibleSvnVersion = '1.8.1'
- }
+    release = true
