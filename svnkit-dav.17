@@ -1,0 +1,16 @@
+# HG changeset patch
+# Parent 367b7011f353f39d032b1d391092d7371b529159
+diff -r 367b7011f353 -r 610f6d3ff0f3 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java	Sun Apr 20 14:28:07 2014 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java	Sun Jul 27 16:38:27 2014 +0200
+@@ -240,7 +240,9 @@
+         } else {
+             setActivityID(DAVPathUtil.head(parameter));
+             final String path = DAVPathUtil.removeHead(parameter, false);
+-            setPath(SVNEncodingUtil.uriDecode(path));
++            // is decoding realy required ??
++            //setPath(SVNEncodingUtil.uriDecode(path));
++            setPath(path);
+         }
+     }
+ 
