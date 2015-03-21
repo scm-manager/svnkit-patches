@@ -1,0 +1,82 @@
+# HG changeset patch
+# Parent  edd976fe586fc70ee95dff81464963aa5a21eb45
+
+diff -r edd976fe586f -r 6e8148090474 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sun Sep 28 18:19:52 2014 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sat Mar 21 16:26:18 2015 +0100
+@@ -15,6 +15,7 @@
+ import java.security.Principal;
+ import java.util.List;
+ import java.util.Map;
++import javax.servlet.ServletContext;
+ 
+ import javax.servlet.http.HttpServletRequest;
+ 
+@@ -45,6 +46,7 @@
+     private static final String DEFAULT_ACTIVITY_DB = "dav/activities.d";
+ 
+     private DAVConfig myDAVConfig;
++    private ServletContext myServletContext;
+ 
+     private String myResourceRepositoryRoot;
+     private String myResourceContext;
+@@ -52,12 +54,13 @@
+     private Principal myUserPrincipal;
+     private File myRepositoryRootDir;
+     
+-    public DAVRepositoryManager(DAVConfig config, HttpServletRequest request) throws SVNException {
++    public DAVRepositoryManager(DAVConfig config, ServletContext servletContext, HttpServletRequest request) throws SVNException {
+         if (config == null) {
+             SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.RA_DAV_INVALID_CONFIG_VALUE), SVNLogType.NETWORK);
+         }
+ 
+         myDAVConfig = config;
++        myServletContext = servletContext;
+ 
+         myResourceRepositoryRoot = getRepositoryRoot(request.getPathInfo());
+         myResourceContext = getResourceContext(request);
+@@ -151,6 +154,10 @@
+     public DAVConfig getDAVConfig() {
+         return myDAVConfig;
+     }
++    
++    public ServletContext getServletContext() {
++        return myServletContext;
++    }
+ 
+     public String getResourceRepositoryRoot() {
+         return myResourceRepositoryRoot;
+diff -r edd976fe586f -r 6e8148090474 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Sun Sep 28 18:19:52 2014 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Sat Mar 21 16:26:18 2015 +0100
+@@ -127,7 +127,7 @@
+         ServletDAVHandler handler = null;
+         logRequest(request);//TODO: remove later
+         try {
+-            DAVRepositoryManager repositoryManager = new DAVRepositoryManager(getDAVConfig(), request);
++            DAVRepositoryManager repositoryManager = new DAVRepositoryManager(getDAVConfig(), getServletContext(), request);
+             handler = DAVHandlerFactory.createHandler(repositoryManager, request, response);
+             handler.execute();
+         } catch (DAVException de) {
+diff -r edd976fe586f -r 6e8148090474 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sun Sep 28 18:19:52 2014 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Mar 21 16:26:18 2015 +0100
+@@ -1559,7 +1559,7 @@
+     protected void appendServerSignature(StringBuffer buffer, String prefix) {
+         buffer.append(prefix);
+         buffer.append("<address>");
+-        ServletContext context = myRequest.getSession().getServletContext();
++        ServletContext context = myRepositoryManager.getServletContext();
+         
+         buffer.append(context.getServerInfo());
+         buffer.append(" ");
+@@ -1644,7 +1644,8 @@
+         
+         long ifModifiedSince = getRequestDateHeader(IF_MODIFIED_SINCE_HEADER);
+         if (DAVHandlerFactory.METHOD_GET.equals(getRequestMethod()) && (notModified || ifNoneMatch == null) && ifModifiedSince != -1) {
+-            long requestTime = myRequest.getSession().getLastAccessedTime();
++            // TODO check if this is correct
++            long requestTime = System.currentTimeMillis();
+             notModified = ifModifiedSince >= lastModifiedTime && ifModifiedSince <= requestTime;
+         }
+         
