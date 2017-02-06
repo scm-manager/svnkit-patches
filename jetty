@@ -1,9 +1,10 @@
 # HG changeset patch
 # Parent 53dd1c7e443040590198ac0b2916306e174c3663
+# Parent  9d50326ecca4f3974ee389141802bd797e0f44b0
 
-diff -r 53dd1c7e4430 .nb-gradle-properties
+diff -r 9d50326ecca4 .nb-gradle-properties
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.nb-gradle-properties	Tue Jul 23 08:59:10 2013 +0200
++++ b/.nb-gradle-properties	Mon Feb 06 13:56:36 2017 +0100
 @@ -0,0 +1,40 @@
 +<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 +<gradle-project-properties>
@@ -45,38 +46,36 @@ diff -r 53dd1c7e4430 .nb-gradle-properties
 +    </task>
 +  </common-tasks>
 +</gradle-project-properties>
-diff -r 53dd1c7e4430 svnkit-dav/build.gradle
---- a/svnkit-dav/build.gradle	Tue Jul 23 07:51:11 2013 +0200
-+++ b/svnkit-dav/build.gradle	Tue Jul 23 08:59:10 2013 +0200
-@@ -1,7 +1,25 @@
+diff -r 9d50326ecca4 svnkit-dav/build.gradle
+--- a/svnkit-dav/build.gradle	Mon Feb 06 13:55:03 2017 +0100
++++ b/svnkit-dav/build.gradle	Mon Feb 06 13:56:36 2017 +0100
+@@ -1,3 +1,21 @@
 +apply plugin: 'jetty'
 +
  jar {
-     enabled = true 
+-    enabled = true 
++    enabled = true
  }
- 
++
 +System.setProperty('jetty.home', "${project.projectDir.path}");
 +
 +println System.getProperty("jetty.home");
 +
 +jettyRun {
-+  httpPort = 9090
-+  stopPort = 8085
-+  stopKey = 'stop-jetty'
-+  jettyConfig = new File("${project.projectDir.path}/src/main/config/jetty-config.xml")
++    httpPort = 9090
++    stopPort = 8085
++    stopKey = 'stop-jetty'
++    jettyConfig = new File("${project.projectDir.path}/src/main/config/jetty-config.xml")
 +}
 +
 +jettyStop {
-+  stopPort = 8085
-+  stopKey = 'stop-jetty'
++    stopPort = 8085
++    stopKey = 'stop-jetty'
 +}
-+
- uploadMaven {
-     repositories.mavenDeployer {
-         pom.whenConfigured { p ->
-diff -r 53dd1c7e4430 svnkit-dav/src/main/config/jetty-config.xml
+\ No newline at end of file
+diff -r 9d50326ecca4 svnkit-dav/src/main/config/jetty-config.xml
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/src/main/config/jetty-config.xml	Tue Jul 23 08:59:10 2013 +0200
++++ b/svnkit-dav/src/main/config/jetty-config.xml	Mon Feb 06 13:56:36 2017 +0100
 @@ -0,0 +1,25 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +<Configure id="Server" class="org.mortbay.jetty.Server">
@@ -104,15 +103,15 @@ diff -r 53dd1c7e4430 svnkit-dav/src/main/config/jetty-config.xml
 +</Configure>
 +-->
 \ No newline at end of file
-diff -r 53dd1c7e4430 svnkit-dav/src/main/config/realm.properties
+diff -r 9d50326ecca4 svnkit-dav/src/main/config/realm.properties
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/src/main/config/realm.properties	Tue Jul 23 08:59:10 2013 +0200
++++ b/svnkit-dav/src/main/config/realm.properties	Mon Feb 06 13:56:36 2017 +0100
 @@ -0,0 +1,1 @@
 +admin: admin,admin
 \ No newline at end of file
-diff -r 53dd1c7e4430 svnkit-dav/src/main/webapp/WEB-INF/web.xml
---- a/svnkit-dav/src/main/webapp/WEB-INF/web.xml	Tue Jul 23 07:51:11 2013 +0200
-+++ b/svnkit-dav/src/main/webapp/WEB-INF/web.xml	Tue Jul 23 08:59:10 2013 +0200
+diff -r 9d50326ecca4 svnkit-dav/src/main/webapp/WEB-INF/web.xml
+--- a/svnkit-dav/src/main/webapp/WEB-INF/web.xml	Mon Feb 06 13:55:03 2017 +0100
++++ b/svnkit-dav/src/main/webapp/WEB-INF/web.xml	Mon Feb 06 13:56:36 2017 +0100
 @@ -3,68 +3,35 @@
           xmlns="http://java.sun.com/xml/ns/j2ee"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
