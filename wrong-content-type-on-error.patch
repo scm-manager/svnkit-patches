@@ -1,0 +1,39 @@
+# HG changeset patch
+# Parent  a8ff6b03c7b5889f3e8b16b39c8764ee6859ccb8
+
+diff -r a8ff6b03c7b5 -r 73f649ee6790 build.gradle
+--- a/build.gradle	Fri Feb 03 15:26:15 2017 +0100
++++ b/build.gradle	Mon Feb 06 10:15:26 2017 +0100
+@@ -50,7 +50,7 @@
+             }
+         }
+     }
+-    
++
+     uploadMaven {
+       repositories.mavenDeployer {
+         repository(url: "http://maven.scm-manager.org/nexus/content/repositories/releases",{
+diff -r a8ff6b03c7b5 -r 73f649ee6790 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Fri Feb 03 15:26:15 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Mon Feb 06 10:15:26 2017 +0100
+@@ -131,7 +131,6 @@
+             handler = DAVHandlerFactory.createHandler(repositoryManager, request, response);
+             handler.execute();
+         } catch (DAVException de) {
+-            response.setContentType(XML_CONTENT_TYPE);
+             handleError(de, response);
+         } catch (SVNException svne) {
+             StringWriter sw = new StringWriter();
+@@ -253,6 +252,12 @@
+                 servletResponse.getWriter().print(errorMessageBuffer.toString());
+                 SVNDebugLog.getDefaultLog().logFine(SVNLogType.NETWORK, errorMessageBuffer.toString());
+                 return;
++            } else {
++                // override application/xml content-type, for errors without xml body,
++                // because the svnclient will try to parse the response body, if the content type
++                // is application/xml. We will use text/html, because some application server will
++                // will return html pages for servlet error codes.
++                servletResponse.setContentType("text/html");
+             }
+             servletResponse.setStatus(error.getResponseCode());
+             return;
