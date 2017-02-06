@@ -1,11 +1,12 @@
 # HG changeset patch
 # Parent a0b6e4d8483cfb30cca5fa331494c13782ce2b03
+# Parent  ad61fb47b0e20487ef080a8f67d3cc226b699e3c
 added support for ra_serf
 
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Wed Jun 12 09:55:00 2013 +0200
-@@ -193,7 +193,15 @@
+diff -r ad61fb47b0e2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Mon Feb 06 12:02:34 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Mon Feb 06 12:14:00 2017 +0100
+@@ -201,7 +201,15 @@
      public DAVResource getRequestedDAVResource(boolean isSVNClient, String deltaBase, String pathInfo, long version, String clientOptions,
              String baseChecksum, String resultChecksum, String label, boolean useCheckedIn, List lockTokens, Map capabilities) throws SVNException {
          pathInfo = pathInfo == null ? getResourcePathInfo() : pathInfo;
@@ -22,7 +23,7 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          DAVConfig config = getDAVConfig();
          String fsParentPath = config.getRepositoryParentPath();
          String xsltURI = config.getXSLTIndex();
-@@ -220,7 +228,6 @@
+@@ -228,7 +236,6 @@
          String userName = myUserPrincipal != null ? myUserPrincipal.getName() : null;
          SVNAuthentication auth = new SVNUserNameAuthentication(userName, false, null, false);
          BasicAuthenticationManager authManager = new BasicAuthenticationManager(new SVNAuthentication[] { auth });
@@ -30,10 +31,10 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          resourceRepository.setAuthenticationManager(authManager);
          DAVResource resource = new DAVResource(resourceRepository, this, resourceURI, isSVNClient, deltaBase, version, 
                  clientOptions, baseChecksum, resultChecksum, userName, activitiesDBDir, lockTokens, capabilities);
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java	Wed Jun 12 09:55:00 2013 +0200
-@@ -39,8 +39,12 @@
+diff -r ad61fb47b0e2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java	Mon Feb 06 12:02:34 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVResourceURI.java	Mon Feb 06 12:14:00 2017 +0100
+@@ -40,8 +40,12 @@
      private boolean myIsVersioned = false;
      private boolean myIsBaseLined = false;
      private boolean myIsWorking = false;
@@ -47,7 +48,7 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          StringBuffer logBuffer = new StringBuffer();
          logBuffer.append('\n');
          logBuffer.append("uri: " + uri);
-@@ -53,7 +57,7 @@
+@@ -54,7 +58,7 @@
          
          myURI = uri == null ? "" : uri;
          myContext = context;
@@ -56,9 +57,9 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          parseURI(label, useCheckedIn);
  
          logBuffer.delete(0, logBuffer.length());
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Wed Jun 12 09:55:00 2013 +0200
+diff -r ad61fb47b0e2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Mon Feb 06 12:02:34 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServletUtil.java	Mon Feb 06 12:14:00 2017 +0100
 @@ -27,6 +27,7 @@
  import org.tmatesoft.svn.core.SVNNodeKind;
  import org.tmatesoft.svn.core.SVNProperties;
@@ -84,9 +85,9 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
 +    }
  
  }
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Wed Jun 12 09:55:00 2013 +0200
+diff -r ad61fb47b0e2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Mon Feb 06 12:02:34 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Mon Feb 06 12:14:00 2017 +0100
 @@ -41,8 +41,15 @@
   */
  public class DAVGetHandler extends ServletDAVHandler {
@@ -160,9 +161,9 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          }
      }
  
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHandlerFactory.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHandlerFactory.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHandlerFactory.java	Wed Jun 12 09:55:00 2013 +0200
+diff -r ad61fb47b0e2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHandlerFactory.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHandlerFactory.java	Mon Feb 06 12:02:34 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHandlerFactory.java	Mon Feb 06 12:14:00 2017 +0100
 @@ -83,6 +83,8 @@
              return new DAVLockHandler(manager, request, response);
          } else if (METHOD_UNLOCK.equals(methodName)) {
@@ -172,38 +173,10 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          }
          
          SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.RA_DAV_REQUEST_FAILED, "Unknown request method ''{0}''", request.getMethod()), 
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Wed Jun 12 09:55:00 2013 +0200
-@@ -292,12 +292,15 @@
-                 myRequestedDepth = SVNDepth.INFINITY;
-             }
- 
--            String srcPath = getRepositoryManager().getRepositoryRelativePath(getUpdateRequest().getSrcURL());
-+            SVNURL srcURL = DAVServletUtil.createAbsoluteURL(getRequest(), getUpdateRequest().getSrcURL());
-+            String srcPath = getRepositoryManager().getRepositoryRelativePath(srcURL);
-             setAnchor(srcPath);
- 
--            SVNURL dstURL = getUpdateRequest().getDstURL();
-+            String dstRelativeUrl = getUpdateRequest().getDstURL();
-+            
-             String dstPath;
--            if (dstURL != null) {
-+            if (dstRelativeUrl != null) {
-+                SVNURL dstURL = DAVServletUtil.createAbsoluteURL(getRequest(), dstRelativeUrl);
-                 dstPath = getRepositoryManager().getRepositoryRelativePath(dstURL);
-                 setDstPath(dstPath);
-                 setDstURL(getRepositoryManager().convertHttpToFile(dstURL));
-@@ -307,7 +310,7 @@
-             FSFS fsfs = getDAVResource().getFSFS();
-             myRevisionRoot = fsfs.createRevisionRoot(targetRevision);
-             
--            SVNURL repositoryURL = getRepositoryManager().convertHttpToFile(getUpdateRequest().getSrcURL());
-+            SVNURL repositoryURL = getRepositoryManager().convertHttpToFile(srcURL);
-             FSRepository repository = (FSRepository) SVNRepositoryFactory.create(repositoryURL);
- 
-             FSTranslateReporter reporter = repository.beginReport(getRevision(),
-@@ -659,7 +662,7 @@
+diff -r ad61fb47b0e2 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Mon Feb 06 12:02:34 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java	Mon Feb 06 12:14:00 2017 +0100
+@@ -660,7 +660,7 @@
              } else {
                  writeEntryTag("remove-prop", name);
              }
@@ -212,68 +185,3 @@ diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
              if (SVNProperty.isEntryProperty(name)) {
                  if (SVNProperty.COMMITTED_REVISION.equals(name)) {
                      entry.setCommitedRevision(value.getString());
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateRequest.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateRequest.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateRequest.java	Wed Jun 12 09:55:00 2013 +0200
-@@ -43,8 +43,8 @@
- 
-     private boolean mySendAll = false;
-     private long myRevision = DAVResource.INVALID_REVISION;
--    private SVNURL mySrcURL = null;
--    private SVNURL myDstURL = null;
-+    private String mySrcURL = null;
-+    private String myDstURL = null;
-     private String myTarget = "";
-     private boolean myTextDeltas = true;
-     private SVNDepth myDepth = SVNDepth.UNKNOWN;
-@@ -73,19 +73,19 @@
-         myRevision = revision;
-     }
- 
--    public SVNURL getSrcURL() {
-+    public String getSrcURL() {
-         return mySrcURL;
-     }
- 
--    private void setSrcURL(SVNURL srcURL) {
-+    private void setSrcURL(String srcURL) {
-         mySrcURL = srcURL;
-     }
- 
--    public SVNURL getDstURL() {
-+    public String getDstURL() {
-         return myDstURL;
-     }
- 
--    private void setDstURL(SVNURL dstURL) {
-+    private void setDstURL(String dstURL) {
-         myDstURL = dstURL;
-     }
- 
-@@ -181,12 +181,12 @@
-                     assertNullCData(element, property);
-                     String value = property.getFirstValue(false);
-                     DAVPathUtil.testCanonical(value);
--                    setSrcURL(SVNURL.parseURIEncoded(value));
-+                    setSrcURL(value);
-                 } else if (element == DST_PATH) {
-                     assertNullCData(element, property);
-                     String value = property.getFirstValue(false);
-                     DAVPathUtil.testCanonical(value);
--                    setDstURL(SVNURL.parseURIEncoded(value));
-+                    setDstURL(value);
-                 } else if (element == UPDATE_TARGET) {
-                     String value = property.getFirstValue(false);
-                     DAVPathUtil.testCanonical(value);
-diff -r a0b6e4d8483c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Sat Jun 08 16:23:16 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Wed Jun 12 09:55:00 2013 +0200
-@@ -1770,7 +1770,7 @@
-             CountingInputStream stream = null;
-             try {
-                 mySAXParser = getSAXParserFactory().newSAXParser();
--                if (myRequest.getContentLength() > 0) {
-+                if (myRequest.getContentLength() > 0 || myRequest.getContentLength() == -1) {
-                     org.xml.sax.XMLReader reader = mySAXParser.getXMLReader();
-                     reader.setContentHandler(this);
-                     reader.setDTDHandler(this);
