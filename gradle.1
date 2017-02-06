@@ -1,38 +1,89 @@
 # HG changeset patch
 # Parent fb1f4590d4ff5c638d26353a667d223b13bf92b8
+# Parent  4316bd8e4d32844d852d6d29e9b7475c69a10a6a
 change group and build jar of svnkit-dav
 
-diff -r fb1f4590d4ff build.gradle
---- a/build.gradle	Wed Jul 24 08:44:46 2013 +0200
-+++ b/build.gradle	Wed Jul 24 08:49:02 2013 +0200
-@@ -118,13 +118,13 @@
+diff -r 4316bd8e4d32 build.gradle
+--- a/build.gradle	Mon Feb 06 14:08:43 2017 +0100
++++ b/build.gradle	Mon Feb 06 14:45:22 2017 +0100
+@@ -1,4 +1,4 @@
+-group = 'org.tmatesoft.svnkit'
++group = 'sonia.svnkit'
+ version = '1.8.14'
+ 
+ task wrapper(type: Wrapper) {
+@@ -149,7 +149,7 @@
+         enabled = true
+         repositories.mavenDeployer {
+             pom.artifactId = 'svnkit'
+-            pom.groupId = 'org.tmatesoft.svnkit'
++            pom.groupId = 'sonia.svnkit'
+             pom.project {
+                 name "SVNKit Java(tm) Subversion Library"
+                 description "Java(tm) library to manage Subversion working copies and repositories"
+@@ -203,7 +203,7 @@
+         enabled = true
+         repositories.mavenDeployer {
+             pom.artifactId = 'svnkit-javahl16'
+-            pom.groupId = 'org.tmatesoft.svnkit'
++            pom.groupId = 'sonia.svnkit'
+             pom.project {
+                 name "SVNKit Java(tm) Subversion JavaHL API implementation"
+                 description "SVNKit Java(tm) Subversion JavaHL API implementation"
+@@ -253,7 +253,7 @@
+         enabled = true
+         repositories.mavenDeployer {
+             pom.artifactId = 'svnkit-cli'
+-            pom.groupId = 'org.tmatesoft.svnkit'
++            pom.groupId = 'sonia.svnkit'
+             pom.project {
+                 name "SVNKit based Subversion command line client"
+                 description "SVNKit based Subversion command line client"
+@@ -293,19 +293,19 @@
  }
  
  project(':svnkit-dav') {
 -    apply plugin: 'war'
-+    // apply plugin: 'war'
- 
+-
      dependencies {
          compile project(path: ':svnkit')
          compile 'javax.servlet:servlet-api:2.5'
      }
--    artifacts { maven war }
-+    artifacts { maven jar, sourcesJar }
- }
+-    artifacts { archives war }
++    artifacts {
++        archives jar, sourcesJar, javadocJar
++    }
  
- project(':svnkit-test') {
-diff -r fb1f4590d4ff settings.gradle
---- a/settings.gradle	Wed Jul 24 08:44:46 2013 +0200
-+++ b/settings.gradle	Wed Jul 24 08:49:02 2013 +0200
+     uploadArchives {
+         enabled = true
+         repositories.mavenDeployer {
+             pom.artifactId = 'svnkit-dav'
+-            pom.groupId = 'org.tmatesoft.svnkit'
++            pom.groupId = 'sonia.svnkit'
+             pom.project {
+                 name "SVNKit based Subversion HTTP server (servlet)"
+                 description "SVNKit based Subversion HTTP server (servlet)"
+@@ -358,7 +358,7 @@
+         enabled = true
+         repositories.mavenDeployer {
+             pom.artifactId = 'svnkit-osgi'
+-            pom.groupId = 'org.tmatesoft.svnkit'
++            pom.groupId = 'sonia.svnkit'
+             pom.whenConfigured { p ->
+                 p.dependencies.clear()
+             }
+diff -r 4316bd8e4d32 settings.gradle
+--- a/settings.gradle	Mon Feb 06 14:08:43 2017 +0100
++++ b/settings.gradle	Mon Feb 06 14:45:22 2017 +0100
 @@ -1,4 +1,4 @@
 -rootProject.name = 'org.tmatesoft.svnkit'
 +rootProject.name = 'sonia.svnkit'
  
  include 'svnkit'
  include 'svnkit-cli'
-diff -r fb1f4590d4ff svnkit-dav/build.gradle
+diff -r 4316bd8e4d32 svnkit-dav/build.gradle
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/build.gradle	Wed Jul 24 08:49:02 2013 +0200
++++ b/svnkit-dav/build.gradle	Mon Feb 06 14:45:22 2017 +0100
 @@ -0,0 +1,11 @@
 +jar {
 +    enabled = true 
@@ -45,3 +96,15 @@ diff -r fb1f4590d4ff svnkit-dav/build.gradle
 +        }
 +    }
 +}
+diff -r 4316bd8e4d32 svnkit-distribution/build.gradle
+--- a/svnkit-distribution/build.gradle	Mon Feb 06 14:08:43 2017 +0100
++++ b/svnkit-distribution/build.gradle	Mon Feb 06 14:45:22 2017 +0100
+@@ -72,7 +72,7 @@
+     configurations.osgi.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+         if (artifact.file.name.endsWith('.zip') || artifact.file.name.endsWith('.jar')) {
+             name = artifact.name
+-            if (name == 'org.tmatesoft.svnkit') {
++            if (name == 'sonia.svnkit') {
+                 name = 'svnkit_osgi'
+             }
+             files[name] = artifact.file
