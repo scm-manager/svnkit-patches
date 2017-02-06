@@ -1,9 +1,10 @@
 # HG changeset patch
 # Parent 349b712beec7b3f106cf9c9802225185d43cf5ba
+# Parent  44dee266597c9b284344fbfdaf1c11e8d2a0a47f
 
-diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/CollectionRenderer.java
+diff -r 44dee266597c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/CollectionRenderer.java
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/CollectionRenderer.java	Fri Nov 08 11:22:35 2013 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/CollectionRenderer.java	Mon Feb 06 13:30:00 2017 +0100
 @@ -0,0 +1,38 @@
 +/*
 + * ====================================================================
@@ -43,9 +44,9 @@ diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
 +  public void renderCollection(StringBuilder builder, DAVResource resource)
 +    throws SVNException;
 +}
-diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Sat Sep 28 12:09:29 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Fri Nov 08 11:22:35 2013 +0100
+diff -r 44dee266597c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Mon Feb 06 13:28:39 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVConfig.java	Mon Feb 06 13:30:00 2017 +0100
 @@ -55,6 +55,7 @@
      private boolean myIsAutoVersioning = false;
      private boolean myIsAllowBulkUpdates = false;
@@ -66,9 +67,9 @@ diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
 +    }
 +
  }
-diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DefaultCollectionRenderer.java
+diff -r 44dee266597c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DefaultCollectionRenderer.java
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DefaultCollectionRenderer.java	Fri Nov 08 11:22:35 2013 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DefaultCollectionRenderer.java	Mon Feb 06 13:30:00 2017 +0100
 @@ -0,0 +1,88 @@
 +/*
 + * ====================================================================
@@ -158,21 +159,21 @@ diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
 +    buffer.append("</em>\n</body></html>");
 +  }
 +}
-diff -r 349b712beec7 svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Sat Sep 28 12:09:29 2013 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Fri Nov 08 11:22:35 2013 +0100
-@@ -75,8 +75,8 @@
-             }
+diff -r 44dee266597c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Mon Feb 06 13:28:39 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVGetHandler.java	Mon Feb 06 13:30:00 2017 +0100
+@@ -67,8 +67,8 @@
+         }
  
-             if (resource.isCollection()) {
--                StringBuffer body = new StringBuffer();
--                generateResponseBody(resource, body);
-+                StringBuilder body = new StringBuilder();
-+                getConfig().getCollectionRenderer().renderCollection(body, resource);
-                 String responseBody = body.toString();
+         if (resource.isCollection()) {
+-            StringBuffer body = new StringBuffer();
+-            generateResponseBody(resource, body);
++            StringBuilder body = new StringBuilder();
++            getConfig().getCollectionRenderer().renderCollection(body, resource);
+             String responseBody = body.toString();
  
-                 try {
-@@ -151,62 +151,4 @@
+             try {
+@@ -142,62 +142,4 @@
              setResponseHeader(ETAG_HEADER, eTag);
          }
      }

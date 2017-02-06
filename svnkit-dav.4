@@ -1,10 +1,11 @@
 # HG changeset patch
 # Parent 08309c51774e0b79d681caa5dac091c239f007a0
+# Parent  d662580f295b6dabf2cde4c79a2eb24d11353d02
 fix error 500 path not found for urls with non url characters
 
-diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sun May 13 16:03:21 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Sun May 13 16:04:16 2012 +0200
+diff -r d662580f295b svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Mon Feb 06 13:20:06 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java	Mon Feb 06 13:21:59 2017 +0100
 @@ -64,7 +64,7 @@
          myUserPrincipal = request.getUserPrincipal();
          myRepositoryRootDir = getRepositoryRootDir(request.getPathInfo());
@@ -14,7 +15,7 @@ diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          if (config.isUsingPBA()) {
              String path = null;
              if (!DAVHandlerFactory.METHOD_MERGE.equals(request.getMethod())) {
-@@ -182,6 +182,7 @@
+@@ -190,6 +190,7 @@
          String uri = DAVPathUtil.addLeadingSlash(url.getURIEncodedPath());
          if (uri.startsWith(getResourceContext())) {
              uri = uri.substring(getResourceContext().length());
@@ -22,7 +23,7 @@ diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          } else {
              SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.RA_DAV_REQUEST_FAILED, "Invalid URL ''{0}'' requested", url.toString()), 
                      SVNLogType.NETWORK);
-@@ -259,6 +260,8 @@
+@@ -267,6 +268,8 @@
          String pathInfo = request.getPathInfo();
          if (pathInfo == null || "".equals(pathInfo)) {
              pathInfo = "/";
@@ -31,7 +32,7 @@ diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          }
          
          if (getDAVConfig().isUsingRepositoryPathDirective()) {
-@@ -291,7 +294,7 @@
+@@ -299,7 +302,7 @@
                  }
                  requestContext = SVNPathUtil.append(requestContext, servletPath);
              }
@@ -40,25 +41,29 @@ diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/se
          }
          
          String reposName = DAVPathUtil.head(pathInfo);
-@@ -301,9 +304,13 @@
+@@ -309,13 +312,17 @@
              }
              String pathToRepos = SVNPathUtil.append(requestContext, servletPath);
              requestContext = SVNPathUtil.append(pathToRepos, reposName);
 -            return SVNEncodingUtil.uriEncode(requestContext);
 +            return encodeRequestContext(requestContext);
          }
-         requestContext = DAVPathUtil.append(requestContext, reposName);
+         if ("".equals(requestContext)) {
+             requestContext = "/" + reposName;
+         } else {
+             requestContext = DAVPathUtil.append(requestContext, reposName);
+         }
 -        return SVNEncodingUtil.uriEncode(requestContext);
 +        return encodeRequestContext(requestContext);
 +    }
 +
 +    private String encodeRequestContext(String requestContext){
-+      return SVNEncodingUtil.uriEncode( DAVPathUtil.addLeadingSlash(requestContext) );
++        return SVNEncodingUtil.uriEncode( DAVPathUtil.addLeadingSlash(requestContext) );
      }
  }
-diff -r 08309c51774e svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Sun May 13 16:03:21 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Sun May 13 16:04:16 2012 +0200
+diff -r d662580f295b svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Mon Feb 06 13:20:06 2017 +0100
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVResponse.java	Mon Feb 06 13:21:59 2017 +0100
 @@ -11,6 +11,7 @@
   */
  package org.tmatesoft.svn.core.internal.server.dav.handlers;
