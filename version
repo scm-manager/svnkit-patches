@@ -5,17 +5,26 @@ prepare for next development iteration
 
 diff -r b3e7fe80a8b9 build.gradle
 --- a/build.gradle	Mon Feb 06 15:16:49 2017 +0100
-+++ b/build.gradle	Mon Feb 06 15:35:43 2017 +0100
++++ b/build.gradle	Mon Feb 06 15:36:36 2017 +0100
 @@ -1,5 +1,5 @@
  group = 'sonia.svnkit'
 -version = '1.8.14'
-+version = '1.8.14-scm1'
++version = '1.8.14-scm2'
  
  task wrapper(type: Wrapper) {
      gradleVersion = '2.14'
+@@ -10,7 +10,7 @@
+ }
+ 
+ ext {
+-   release = true
++   release = false
+    target = '1.6'
+    compatibleSvnVersion = '1.9.0'
+ 
 diff -r b3e7fe80a8b9 svnkit-osgi/build.gradle
 --- a/svnkit-osgi/build.gradle	Mon Feb 06 15:16:49 2017 +0100
-+++ b/svnkit-osgi/build.gradle	Mon Feb 06 15:35:43 2017 +0100
++++ b/svnkit-osgi/build.gradle	Mon Feb 06 15:36:36 2017 +0100
 @@ -35,7 +35,7 @@
      ext {
          bundleName = rootProject.group
