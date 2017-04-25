@@ -1,15 +1,15 @@
 # HG changeset patch
 # Parent fb1f4590d4ff5c638d26353a667d223b13bf92b8
-# Parent  4316bd8e4d32844d852d6d29e9b7475c69a10a6a
+# Parent  e9445416aaf48897a1ca64d9cd20bd1dded0f023
 change group and build jar of svnkit-dav
 
-diff -r 4316bd8e4d32 build.gradle
---- a/build.gradle	Mon Feb 06 14:08:43 2017 +0100
-+++ b/build.gradle	Mon Feb 06 14:45:22 2017 +0100
+diff -r e9445416aaf4 build.gradle
+--- a/build.gradle	Tue Apr 25 21:42:50 2017 +0200
++++ b/build.gradle	Tue Apr 25 21:44:14 2017 +0200
 @@ -1,4 +1,4 @@
 -group = 'org.tmatesoft.svnkit'
 +group = 'sonia.svnkit'
- version = '1.8.14'
+ version = '1.8.15'
  
  task wrapper(type: Wrapper) {
 @@ -149,7 +149,7 @@
@@ -72,18 +72,18 @@ diff -r 4316bd8e4d32 build.gradle
              pom.whenConfigured { p ->
                  p.dependencies.clear()
              }
-diff -r 4316bd8e4d32 settings.gradle
---- a/settings.gradle	Mon Feb 06 14:08:43 2017 +0100
-+++ b/settings.gradle	Mon Feb 06 14:45:22 2017 +0100
+diff -r e9445416aaf4 settings.gradle
+--- a/settings.gradle	Tue Apr 25 21:42:50 2017 +0200
++++ b/settings.gradle	Tue Apr 25 21:44:14 2017 +0200
 @@ -1,4 +1,4 @@
 -rootProject.name = 'org.tmatesoft.svnkit'
 +rootProject.name = 'sonia.svnkit'
  
  include 'svnkit'
  include 'svnkit-cli'
-diff -r 4316bd8e4d32 svnkit-dav/build.gradle
+diff -r e9445416aaf4 svnkit-dav/build.gradle
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/build.gradle	Mon Feb 06 14:45:22 2017 +0100
++++ b/svnkit-dav/build.gradle	Tue Apr 25 21:44:14 2017 +0200
 @@ -0,0 +1,11 @@
 +jar {
 +    enabled = true 
@@ -96,9 +96,9 @@ diff -r 4316bd8e4d32 svnkit-dav/build.gradle
 +        }
 +    }
 +}
-diff -r 4316bd8e4d32 svnkit-distribution/build.gradle
---- a/svnkit-distribution/build.gradle	Mon Feb 06 14:08:43 2017 +0100
-+++ b/svnkit-distribution/build.gradle	Mon Feb 06 14:45:22 2017 +0100
+diff -r e9445416aaf4 svnkit-distribution/build.gradle
+--- a/svnkit-distribution/build.gradle	Tue Apr 25 21:42:50 2017 +0200
++++ b/svnkit-distribution/build.gradle	Tue Apr 25 21:44:14 2017 +0200
 @@ -72,7 +72,7 @@
      configurations.osgi.resolvedConfiguration.resolvedArtifacts.each { artifact ->
          if (artifact.file.name.endsWith('.zip') || artifact.file.name.endsWith('.jar')) {
