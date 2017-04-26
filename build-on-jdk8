@@ -1,0 +1,17 @@
+# HG changeset patch
+# Parent  4be96be14e21d1c452ae9e2fe50b2fcdf13c4d57
+
+diff -r 4be96be14e21 build.gradle
+--- a/build.gradle	Tue Apr 25 21:49:58 2017 +0200
++++ b/build.gradle	Wed Apr 26 08:35:28 2017 +0200
+@@ -93,6 +93,10 @@
+         classifier = 'sources'
+     }
+ 
++    javadoc {
++        failOnError = false
++    }
++
+     task javadocJar(type: Jar, dependsOn: javadoc) {
+         description="Builds Javadoc Jar"
+         from "$docsDir/javadoc"
