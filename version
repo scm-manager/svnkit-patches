@@ -1,15 +1,15 @@
 # HG changeset patch
 # Parent 55210dd12e459bdc0e3f48cf4dcc9da9458daf83
-# Parent  62fc7d82c584881b7f4c86e9bdbd6aa4ade16bfd
+# Parent  b10a2b492ef0e5c6e63c94c914eb6b15e1c05c18
 prepare for next development iteration
 
-diff -r 62fc7d82c584 build.gradle
---- a/build.gradle	Wed Apr 26 11:46:31 2017 +0200
-+++ b/build.gradle	Wed Apr 26 11:50:41 2017 +0200
+diff -r b10a2b492ef0 build.gradle
+--- a/build.gradle	Wed Oct 25 11:01:14 2017 +0200
++++ b/build.gradle	Wed Oct 25 11:01:54 2017 +0200
 @@ -1,5 +1,5 @@
  group = 'sonia.svnkit'
--version = '1.8.15'
-+version = '1.8.15-scm2'
+-version = '1.9.0'
++version = '1.9.0-scm1'
  
  task wrapper(type: Wrapper) {
      gradleVersion = '2.14'
@@ -22,9 +22,9 @@ diff -r 62fc7d82c584 build.gradle
     target = '1.6'
     compatibleSvnVersion = '1.9.0'
  
-diff -r 62fc7d82c584 svnkit-osgi/build.gradle
---- a/svnkit-osgi/build.gradle	Wed Apr 26 11:46:31 2017 +0200
-+++ b/svnkit-osgi/build.gradle	Wed Apr 26 11:50:41 2017 +0200
+diff -r b10a2b492ef0 svnkit-osgi/build.gradle
+--- a/svnkit-osgi/build.gradle	Wed Oct 25 11:01:14 2017 +0200
++++ b/svnkit-osgi/build.gradle	Wed Oct 25 11:01:54 2017 +0200
 @@ -35,7 +35,7 @@
      ext {
          bundleName = rootProject.group
