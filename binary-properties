@@ -1,0 +1,72 @@
+# HG changeset patch
+# Parent  361aa148f4544556ef8d5c820861e356e41f2708
+
+diff -r 361aa148f454 -r 0f43437be952 svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/CustomFSConfiguration.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/CustomFSConfiguration.java	Wed Oct 25 12:57:09 2017 +0200
+@@ -0,0 +1,47 @@
++package org.tmatesoft.svn.core.internal.io.fs;
++
++/**
++ * Reads custom fs configuration settings from system properties.
++ */
++class CustomFSConfiguration {
++
++    private boolean ignoreInvalidEncodedProperties = false;
++    private boolean alwaysAllowBinaryProperties = false;
++
++    private CustomFSConfiguration() {
++        ignoreInvalidEncodedProperties = Boolean.getBoolean("sonia.svnkit.fsfs.ignoreInvalidEncodedProperties");
++        alwaysAllowBinaryProperties = Boolean.getBoolean("sonia.svnkit.fsfs.alwaysAllowBinaryProperties");
++    }
++
++    /**
++     * Returns {@code true} if every property should be treated as binary if the encoding fails.
++     *
++     * @return {@code true} if binary properties are always allowed
++     */
++    boolean isAlwaysAllowBinaryProperties() {
++        return alwaysAllowBinaryProperties;
++    }
++
++    /**
++     * Returns {@code true} if properties which are not decodable should be ignored.
++     *
++     * @return {@code true} if invalid encoded properties can be ignored
++     */
++    boolean isIgnoreInvalidEncodedProperties() {
++        return ignoreInvalidEncodedProperties;
++    }
++
++    /**
++     * Returns singleton instance.
++     *
++     * @return singleton instance
++     */
++    static CustomFSConfiguration getInstance() {
++        return InstanceHolder.INSTANCE;
++    }
++
++    private static final class InstanceHolder {
++        static final CustomFSConfiguration INSTANCE = new CustomFSConfiguration();
++    }
++
++}
+diff -r 361aa148f454 -r 0f43437be952 svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSFile.java
+--- a/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSFile.java	Wed Oct 25 11:04:23 2017 +0200
++++ b/svnkit/src/main/java/org/tmatesoft/svn/core/internal/io/fs/FSFile.java	Wed Oct 25 12:57:09 2017 +0200
+@@ -278,11 +278,13 @@
+                 try {
+                     properties.put(key, myDecoder.decode(myReadLineBuffer).toString());
+                 } catch (CharacterCodingException cce) {
+-                    if (allowBinaryValues){
++                    if (allowBinaryValues || CustomFSConfiguration.getInstance().isAlwaysAllowBinaryProperties()){
+                         byte[] dst = new byte[limit - pos];
+                         myReadLineBuffer.position(pos);
+                         myReadLineBuffer.get(dst);
+                         properties.put(key, dst);                                                
++                    } else if (CustomFSConfiguration.getInstance().isIgnoreInvalidEncodedProperties()) {
++                        SVNDebugLog.getDefaultLog().log(SVNLogType.FSFS, "ignore undecodable line: " + line, Level.WARNING);
+                     } else {
+                         SVNErrorMessage error = SVNErrorMessage.create(SVNErrorCode.FS_CORRUPT, "File ''{0}'' contains unexpected binary property value", getFile());
+                         SVNErrorManager.error(error, cce, SVNLogType.DEFAULT);

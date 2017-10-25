@@ -20,4 +20,5 @@ svnkit-dav.17
 svnkit-dav.session
 wrong-content-type-on-error.patch
 build-on-jdk8
+binary-properties
 version
