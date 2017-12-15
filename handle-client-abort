@@ -1,0 +1,147 @@
+# HG changeset patch
+# Parent  1c600410f0efbf60e5e1d03c64af20031db52f38
+
+diff -r 1c600410f0ef -r a813c6d4c07c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Mon Sep 18 11:38:12 2017 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVServlet.java	Fri Dec 15 09:31:56 2017 +0100
+@@ -14,6 +14,7 @@
+ import java.io.IOException;
+ import java.io.PrintWriter;
+ import java.io.StringWriter;
++
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Map;
+@@ -29,6 +30,7 @@
+ import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
+ import org.tmatesoft.svn.core.internal.server.dav.handlers.DAVHandlerFactory;
+ import org.tmatesoft.svn.core.internal.server.dav.handlers.DAVResponse;
++import org.tmatesoft.svn.core.internal.server.dav.handlers.DAVHttpServletResponse;
+ import org.tmatesoft.svn.core.internal.server.dav.handlers.ServletDAVHandler;
+ import org.tmatesoft.svn.core.internal.util.SVNEncodingUtil;
+ import org.tmatesoft.svn.core.internal.util.SVNHashMap;
+@@ -123,7 +125,9 @@
+         }
+     }
+ 
+-    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
++    public void service(HttpServletRequest request, HttpServletResponse servletResponse) throws ServletException, IOException {
++        DAVHttpServletResponse response = DAVHttpServletResponse.wrapOrCast(servletResponse);
++
+         ServletDAVHandler handler = null;
+         logRequest(request);//TODO: remove later
+         try {
+diff -r 1c600410f0ef -r a813c6d4c07c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHttpServletResponse.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVHttpServletResponse.java	Fri Dec 15 09:31:56 2017 +0100
+@@ -0,0 +1,80 @@
++package org.tmatesoft.svn.core.internal.server.dav.handlers;
++
++import javax.servlet.http.HttpServletResponse;
++import javax.servlet.http.HttpServletResponseWrapper;
++import java.io.IOException;
++import java.io.OutputStreamWriter;
++import java.io.Writer;
++
++/**
++ * Extends the {@link HttpServletResponse} with methods for the svn dav protocol.
++ *
++ * @author Sebastian Sdorra
++ */
++public class DAVHttpServletResponse extends HttpServletResponseWrapper {
++
++    private static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
++
++    private Writer throwingWriter;
++
++    private DAVHttpServletResponse(HttpServletResponse response) {
++        super(response);
++    }
++
++    /**
++     * Wrap the given {@link HttpServletResponse} or cast it to a {@link DAVHttpServletResponse}.
++     *
++     * @param response http servlet response
++     * @return dav servlet response
++     */
++    public static DAVHttpServletResponse wrapOrCast(HttpServletResponse response) {
++        if (response instanceof DAVHttpServletResponse) {
++            return (DAVHttpServletResponse) response;
++        }
++        return new DAVHttpServletResponse(response);
++    }
++
++    /**
++     * Returns a writer which is able to throw an {@link IOException} on write. This method should be used instead of
++     * {@link #getWriter()}, which returns an exception swallowing {@link java.io.PrintWriter}. If a
++     * {@link java.io.PrintWriter} is used an client abort has no impact on the running action. If the throwing
++     * {@link Writer} is used an client abort stops the current running action immediately.
++     *
++     * @return {@link Writer} which is able to throw an {@link IOException} on a client connection abort
++     *
++     * @throws IOException
++     */
++    public Writer getThrowingWriter() throws IOException {
++        String characterEncoding = getCharacterEncodingOrDefault();
++        if (throwingWriter == null) {
++            throwingWriter = new OutputStreamWriter(getOutputStream(), characterEncoding);
++        }
++        return throwingWriter;
++    }
++
++    private String getCharacterEncodingOrDefault() {
++        String characterEncoding = getCharacterEncoding();
++        if (isNullOrEmpty(characterEncoding)) {
++            characterEncoding = DEFAULT_CHARACTER_ENCODING;
++        }
++        return characterEncoding;
++    }
++
++    private boolean isNullOrEmpty(String value) {
++        return value == null || value.isEmpty();
++    }
++
++    @Override
++    public void flushBuffer() throws IOException {
++        closeThrowingWriter();
++        super.flushBuffer();
++    }
++
++    private void closeThrowingWriter() throws IOException {
++        if (throwingWriter != null) {
++            throwingWriter.close();
++            throwingWriter = null;
++        }
++    }
++
++}
+diff -r 1c600410f0ef -r a813c6d4c07c svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Mon Sep 18 11:38:12 2017 +0200
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/ServletDAVHandler.java	Fri Dec 15 09:31:56 2017 +0100
+@@ -202,7 +202,7 @@
+ 
+     private DAVRepositoryManager myRepositoryManager;
+     private HttpServletRequest myRequest;
+-    private HttpServletResponse myResponse;
++    private DAVHttpServletResponse myResponse;
+     private FSCommitter myCommitter;
+     private FSDeltaConsumer myDeltaConsumer;
+     
+@@ -254,7 +254,7 @@
+     protected ServletDAVHandler(DAVRepositoryManager connector, HttpServletRequest request, HttpServletResponse response) {
+         myRepositoryManager = connector;
+         myRequest = request;
+-        myResponse = response;
++        myResponse = DAVHttpServletResponse.wrapOrCast(response);
+         init();
+     }
+ 
+@@ -1430,7 +1430,7 @@
+ 
+     protected Writer getResponseWriter() throws SVNException {
+         try {
+-            return myResponse.getWriter();
++            return myResponse.getThrowingWriter();
+         } catch (IOException e) {
+             SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.IO_ERROR, e), e, SVNLogType.NETWORK);
+         }
