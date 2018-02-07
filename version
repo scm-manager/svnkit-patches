@@ -5,14 +5,23 @@ prepare for next development iteration
 
 diff -r e5c6b45f35c5 build.gradle
 --- a/build.gradle	Fri Dec 15 10:43:44 2017 +0100
-+++ b/build.gradle	Wed Feb 07 15:11:53 2018 +0100
++++ b/build.gradle	Wed Feb 07 15:13:40 2018 +0100
 @@ -1,5 +1,5 @@
  group = 'sonia.svnkit'
 -version = '1.9.0'
-+version = '1.9.0-scm3'
++version = '1.9.0-scm4'
  
  task wrapper(type: Wrapper) {
      gradleVersion = '2.14'
+@@ -10,7 +10,7 @@
+ }
+ 
+ ext {
+-   release = true
++   release = false
+    target = '1.6'
+    compatibleSvnVersion = '1.9.0'
+ 
 @@ -63,7 +63,7 @@
      }
  
@@ -24,7 +33,7 @@ diff -r e5c6b45f35c5 build.gradle
                  authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
 diff -r e5c6b45f35c5 svnkit-osgi/build.gradle
 --- a/svnkit-osgi/build.gradle	Fri Dec 15 10:43:44 2017 +0100
-+++ b/svnkit-osgi/build.gradle	Wed Feb 07 15:11:53 2018 +0100
++++ b/svnkit-osgi/build.gradle	Wed Feb 07 15:13:40 2018 +0100
 @@ -35,7 +35,7 @@
      ext {
          bundleName = rootProject.group
