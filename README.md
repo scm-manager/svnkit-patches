@@ -76,3 +76,7 @@ guilt refresh
 
 Add new patch files, but __do not commit status file__.
 
+### Run tests
+
+Please run the tests from https://github.com/scm-manager/svn-server-spec
+
