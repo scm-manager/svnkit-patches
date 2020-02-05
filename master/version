@@ -3,26 +3,27 @@
 # Parent  e5c6b45f35c529d8f80f5c58b62042a6c8405b33
 prepare for next development iteration
 
-diff -r e5c6b45f35c5 build.gradle
---- a/build.gradle	Fri Dec 15 10:43:44 2017 +0100
-+++ b/build.gradle	Wed Feb 07 15:13:40 2018 +0100
+diff --git a/build.gradle b/build.gradle
+index 578d63881..1a50d58b2 100644
+--- a/build.gradle
++++ b/build.gradle
 @@ -1,5 +1,5 @@
  group = 'sonia.svnkit'
--version = '1.9.0'
-+version = '1.9.0-scm4'
+-version = '1.10.1'
++version = '1.10.1-scm1'
  
  task wrapper(type: Wrapper) {
      gradleVersion = '2.14'
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,7 @@ def javaProjects() {
  }
  
  ext {
--   release = true
+-   release = project.hasProperty('release')
 +   release = false
     target = '1.6'
-    compatibleSvnVersion = '1.9.0'
+    compatibleSvnVersion = '1.10.0'
  
-@@ -63,7 +63,7 @@
+@@ -63,7 +63,7 @@ subprojects {
      }
  
      uploadArchives {
@@ -31,15 +32,16 @@ diff -r e5c6b45f35c5 build.gradle
          repositories.mavenDeployer {
              repository( url : "http://maven.scm-manager.org/nexus/content/repositories/releases") {
                  authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
-diff -r e5c6b45f35c5 svnkit-osgi/build.gradle
---- a/svnkit-osgi/build.gradle	Fri Dec 15 10:43:44 2017 +0100
-+++ b/svnkit-osgi/build.gradle	Wed Feb 07 15:13:40 2018 +0100
-@@ -35,7 +35,7 @@
-     ext {
-         bundleName = rootProject.group
-         bundleSymbolicName = 'SVNKit pure Java Subversion Library'
--        bundleVersion = rootProject.version.replace('-SNAPSHOT', '.SNAPSHOT').replace('-', '.') + (rootProject.release ? '.' : '_') + buildNumber
-+        bundleVersion = rootProject.version.replaceFirst('-scm[0-9]+', '').replace('-SNAPSHOT', '.SNAPSHOT').replace('-', '.') + (rootProject.release ? '.' : '_') + buildNumber
+diff --git a/svnkit-osgi/build.gradle b/svnkit-osgi/build.gradle
+index 723e5c7c7..835a9d11e 100644
+--- a/svnkit-osgi/build.gradle
++++ b/svnkit-osgi/build.gradle
+@@ -39,7 +39,7 @@ jar {
+         if (rootProject.release && rootProject.buildNumber.startsWith("snapshot")) {
+             bundleVersion = rootProject.version.replace('-snapshot', '.snapshot').replace('-', '.')
+         } else {
+-            bundleVersion = rootProject.version.replace('-SNAPSHOT', '.SNAPSHOT').replace('-', '.') + (rootProject.release ? '.' : '_') + buildNumber
++            bundleVersion = rootProject.version.replaceFirst('-scm[0-9]+', '').replace('-SNAPSHOT', '.SNAPSHOT').replace('-', '.') + (rootProject.release ? '.' : '_') + buildNumber
+         }
          bundleVendor = 'TMate Software'
  
-         println "OSGi version: ${bundleVersion}"

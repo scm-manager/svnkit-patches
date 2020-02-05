@@ -3,16 +3,17 @@
 # Parent  2eb3b1a6b0408a2c5e748f772d8d8b07196982e2
 change group and build jar of svnkit-dav
 
-diff -r 2eb3b1a6b040 build.gradle
---- a/build.gradle	Wed Oct 25 11:00:20 2017 +0200
-+++ b/build.gradle	Wed Oct 25 11:01:06 2017 +0200
+diff --git a/build.gradle b/build.gradle
+index 1bdad840e..c698cdcd6 100644
+--- a/build.gradle
++++ b/build.gradle
 @@ -1,4 +1,4 @@
 -group = 'org.tmatesoft.svnkit'
 +group = 'sonia.svnkit'
- version = '1.9.0'
+ version = '1.10.1'
  
  task wrapper(type: Wrapper) {
-@@ -149,7 +149,7 @@
+@@ -150,7 +150,7 @@ project(':svnkit') {
          enabled = true
          repositories.mavenDeployer {
              pom.artifactId = 'svnkit'
@@ -21,7 +22,7 @@ diff -r 2eb3b1a6b040 build.gradle
              pom.project {
                  name "SVNKit Java(tm) Subversion Library"
                  description "Java(tm) library to manage Subversion working copies and repositories"
-@@ -203,7 +203,7 @@
+@@ -204,7 +204,7 @@ project(':svnkit-javahl16') {
          enabled = true
          repositories.mavenDeployer {
              pom.artifactId = 'svnkit-javahl16'
@@ -30,7 +31,7 @@ diff -r 2eb3b1a6b040 build.gradle
              pom.project {
                  name "SVNKit Java(tm) Subversion JavaHL API implementation"
                  description "SVNKit Java(tm) Subversion JavaHL API implementation"
-@@ -253,7 +253,7 @@
+@@ -254,7 +254,7 @@ project(':svnkit-cli') {
          enabled = true
          repositories.mavenDeployer {
              pom.artifactId = 'svnkit-cli'
@@ -39,7 +40,7 @@ diff -r 2eb3b1a6b040 build.gradle
              pom.project {
                  name "SVNKit based Subversion command line client"
                  description "SVNKit based Subversion command line client"
-@@ -293,19 +293,19 @@
+@@ -294,19 +294,19 @@ project(':svnkit-cli') {
  }
  
  project(':svnkit-dav') {
@@ -63,7 +64,7 @@ diff -r 2eb3b1a6b040 build.gradle
              pom.project {
                  name "SVNKit based Subversion HTTP server (servlet)"
                  description "SVNKit based Subversion HTTP server (servlet)"
-@@ -358,7 +358,7 @@
+@@ -359,7 +359,7 @@ project(':svnkit-osgi') {
          enabled = true
          repositories.mavenDeployer {
              pom.artifactId = 'svnkit-osgi'
@@ -72,18 +73,21 @@ diff -r 2eb3b1a6b040 build.gradle
              pom.whenConfigured { p ->
                  p.dependencies.clear()
              }
-diff -r 2eb3b1a6b040 settings.gradle
---- a/settings.gradle	Wed Oct 25 11:00:20 2017 +0200
-+++ b/settings.gradle	Wed Oct 25 11:01:06 2017 +0200
+diff --git a/settings.gradle b/settings.gradle
+index 05272d42c..928c82ccf 100644
+--- a/settings.gradle
++++ b/settings.gradle
 @@ -1,4 +1,4 @@
 -rootProject.name = 'org.tmatesoft.svnkit'
 +rootProject.name = 'sonia.svnkit'
  
  include 'svnkit'
  include 'svnkit-cli'
-diff -r 2eb3b1a6b040 svnkit-dav/build.gradle
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/svnkit-dav/build.gradle	Wed Oct 25 11:01:06 2017 +0200
+diff --git a/svnkit-dav/build.gradle b/svnkit-dav/build.gradle
+new file mode 100644
+index 000000000..3ab35e338
+--- /dev/null
++++ b/svnkit-dav/build.gradle
 @@ -0,0 +1,11 @@
 +jar {
 +    enabled = true 
@@ -96,10 +100,11 @@ diff -r 2eb3b1a6b040 svnkit-dav/build.gradle
 +        }
 +    }
 +}
-diff -r 2eb3b1a6b040 svnkit-distribution/build.gradle
---- a/svnkit-distribution/build.gradle	Wed Oct 25 11:00:20 2017 +0200
-+++ b/svnkit-distribution/build.gradle	Wed Oct 25 11:01:06 2017 +0200
-@@ -72,7 +72,7 @@
+diff --git a/svnkit-distribution/build.gradle b/svnkit-distribution/build.gradle
+index 0b047e365..51243ae6b 100644
+--- a/svnkit-distribution/build.gradle
++++ b/svnkit-distribution/build.gradle
+@@ -72,7 +72,7 @@ task buildUpdateSite << {
      configurations.osgi.resolvedConfiguration.resolvedArtifacts.each { artifact ->
          if (artifact.file.name.endsWith('.zip') || artifact.file.name.endsWith('.jar')) {
              name = artifact.name

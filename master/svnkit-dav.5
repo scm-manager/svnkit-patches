@@ -2,18 +2,17 @@
 # Parent c92d55a9a2faaf7c055ba73f4b31192e1844a239
 skip not supported properties
 
-diff -r c92d55a9a2fa svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java
---- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java	Sun May 13 16:04:16 2012 +0200
-+++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java	Sun May 13 16:06:18 2012 +0200
-@@ -325,7 +325,10 @@
-                         filledNamespaces = true;
+diff --git a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java
+index 9e3c84d4a..e565ae9f2 100644
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVPropfindHandler.java
+@@ -325,6 +325,9 @@ public class DAVPropfindHandler extends ServletDAVHandler implements IDAVResourc
+                             filledNamespaces = true;
+                         }
+                         continue;
++                    // skip not supported properties
++                    } else if (doneAction == DAVInsertPropAction.NOT_SUPP) {
++                        continue;
                      }
-                     continue;
--                } 
-+                // skip not supported properties
-+                } else if ( doneAction == DAVInsertPropAction.NOT_SUPP ){
-+                  continue;
-+                }
-             }
-             
-             if (propsProvider.isDeferred()) {
+                 }
+ 
