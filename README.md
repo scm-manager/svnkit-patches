@@ -66,7 +66,7 @@ If you want to create new patches, just do so:
 guilt new <new patch name>
 ```
 
-To create a new version, drop the old relase patch and create a new one:
+To create a new version, drop the old release patch and create a new one:
 
 ```
 guilt delete <old version>
