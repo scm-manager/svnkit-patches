@@ -4,7 +4,7 @@
 prepare for next development iteration
 
 diff --git a/build.gradle b/build.gradle
-index 578d63881..1a50d58b2 100644
+index 578d63881..11f07d13f 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -1,5 +1,5 @@
@@ -19,11 +19,21 @@ index 578d63881..1a50d58b2 100644
  
  ext {
 -   release = project.hasProperty('release')
-+   release = false
++   release = true
     target = '1.6'
     compatibleSvnVersion = '1.10.0'
  
-@@ -63,7 +63,7 @@ subprojects {
+@@ -21,9 +21,6 @@ ext {
+    if (buildNumber == null) {
+         def buildTime = new java.text.SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.US).format(new Date())
+         buildNumber = (release ? 'snapshot' : 't') + buildTime
+-        if (release) {
+-            rootProject.version = rootProject.version + '-' + buildNumber
+-        }
+    }
+    println "Version: ${rootProject.version}"
+    println "Build Number: ${rootProject.buildNumber}"
+@@ -63,7 +60,7 @@ subprojects {
      }
  
      uploadArchives {
