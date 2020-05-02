@@ -22,4 +22,5 @@ wrong-content-type-on-error.patch
 build-on-jdk8
 binary-properties
 handle-client-abort
+svnkit-dav.verify-client-checksum
 version
