@@ -4,13 +4,13 @@
 prepare for next development iteration
 
 diff --git a/build.gradle b/build.gradle
-index 578d63881..11f07d13f 100644
+index 578d63881..e9212329b 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -1,5 +1,5 @@
  group = 'sonia.svnkit'
 -version = '1.10.1'
-+version = '1.10.1-scm1'
++version = '1.10.1-scm2'
  
  task wrapper(type: Wrapper) {
      gradleVersion = '2.14'
