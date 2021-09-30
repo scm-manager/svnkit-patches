@@ -40,8 +40,8 @@ index 578d63881..e9212329b 100644
 -        enabled = false
 +        enabled = true
          repositories.mavenDeployer {
-             repository( url : "http://maven.scm-manager.org/nexus/content/repositories/releases") {
-                 authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
+             repository( url : "https://packages.scm-manager.org/repository/releases/") {
+                 authentication(userName: packagesScmManagerUsername, password: packagesScmManagerPassword)
 diff --git a/svnkit-osgi/build.gradle b/svnkit-osgi/build.gradle
 index 723e5c7c7..835a9d11e 100644
 --- a/svnkit-osgi/build.gradle

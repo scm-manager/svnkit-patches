@@ -35,8 +35,8 @@ diff -r 0e0da752a5cf build.gradle
 -                        authentication(userName: "${mavenUser}", password: "${mavenPassword}")
 -                    }
 -                }
-+            repository( url : "http://maven.scm-manager.org/nexus/content/repositories/releases") {
-+                authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
++            repository( url : "https://packages.scm-manager.org/repository/releases/") {
++                authentication(userName: packagesScmManagerUsername, password: packagesScmManagerPassword)
              }
 -
 -            if (project.hasProperty('mavenSnapshotsRepository')) {
@@ -45,8 +45,8 @@ diff -r 0e0da752a5cf build.gradle
 -                        authentication(userName: "${mavenUser}", password: "${mavenPassword}")
 -                    }
 -                }
-+            snapshotRepository( url : "http://maven.scm-manager.org/nexus/content/repositories/snapshots") {
-+                authentication(userName: scmMavenRepoUsername, password: scmMavenRepoPassword)
++            snapshotRepository( url : "https://packages.scm-manager.org/repository/snapshots/") {
++                authentication(userName: packagesScmManagerUsername, password: packagesScmManagerPassword)
              }
          }
      }
