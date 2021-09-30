@@ -23,5 +23,5 @@ build-on-jdk8
 binary-properties
 handle-client-abort
 svnkit-dav.verify-client-checksum
-version
 svnkit-dav.path-info-decoding
+version
