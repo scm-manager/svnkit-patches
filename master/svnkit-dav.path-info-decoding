@@ -1,0 +1,13 @@
+diff --git a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+index 1933c57cd..740d2d48c 100644
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/DAVRepositoryManager.java
+@@ -282,8 +282,6 @@ public class DAVRepositoryManager {
+         String pathInfo = request.getPathInfo();
+         if (pathInfo == null || "".equals(pathInfo)) {
+             pathInfo = "/";
+-        } else {
+-          pathInfo = SVNEncodingUtil.uriDecode(pathInfo);
+         }
+         
+         if (getDAVConfig().isUsingRepositoryPathDirective()) {
