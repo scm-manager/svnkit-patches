@@ -24,4 +24,5 @@ binary-properties
 handle-client-abort
 svnkit-dav.verify-client-checksum
 svnkit-dav.path-info-decoding
+spaces_in_filenames
 version
