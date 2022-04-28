@@ -1,0 +1,21 @@
+diff --git a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
+index 5db580e64..7ebbfce23 100644
+--- a/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
++++ b/svnkit-dav/src/main/java/org/tmatesoft/svn/core/internal/server/dav/handlers/DAVUpdateHandler.java
+@@ -43,6 +43,7 @@ import org.tmatesoft.svn.core.internal.server.dav.DAVResource;
+ import org.tmatesoft.svn.core.internal.server.dav.DAVResourceKind;
+ import org.tmatesoft.svn.core.internal.server.dav.DAVServletUtil;
+ import org.tmatesoft.svn.core.internal.server.dav.DAVXMLUtil;
++import org.tmatesoft.svn.core.internal.util.SVNEncodingUtil;
+ import org.tmatesoft.svn.core.internal.util.SVNHashMap;
+ import org.tmatesoft.svn.core.internal.util.SVNHashSet;
+ import org.tmatesoft.svn.core.internal.util.SVNPathUtil;
+@@ -400,7 +401,7 @@ public class DAVUpdateHandler extends DAVReportHandler implements ISVNEditor {
+     }
+ 
+     private String getRealPath(String path) {
+-        path = SVNPathUtil.getAbsolutePath(SVNPathUtil.append(getAnchor(), path));
++        path = SVNPathUtil.getAbsolutePath(SVNPathUtil.append(getAnchor(), SVNEncodingUtil.uriEncode(path)));
+         if (getPathMap().isEmpty()) {
+             return path;
+         }
