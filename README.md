@@ -1,6 +1,5 @@
 # SCM-Manager patches for SVNKit
 
-
 This repository contains pathes for the usage of
 [SVNKit](http://svnkit.com/) in [SCM-Manager](https://scm-manager.org/).
 These patches can be applied using [guilt](https://github.com/jeffpc/guilt).
@@ -75,6 +74,21 @@ guilt refresh
 ```
 
 Add new patch files, but __do not commit status file__.
+
+### Build
+
+To build the patched version of SVNKit, set your credentials for packages.scm-manager.org in `~/.gradle/gradle.properties`:
+
+```
+packagesScmManagerUsername=
+packagesScmManagerPassword=
+```
+
+To install the version to the local maven repository, call
+
+```
+./gradlew install
+```
 
 ### Run tests
 
